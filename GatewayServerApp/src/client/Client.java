@@ -1,6 +1,8 @@
 package client;
 
 import java.awt.Color;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -169,7 +171,7 @@ public class Client {
     	// Test large file uploads.
     	// Source: http://stackoverflow.com/questions/10819516/sending-big-file-using-fileinputstream-objectoutputstream
     	// Split bytes into chunks (check source)
-    	FileInputStream fis = new FileInputStream(_file);
+    	/*FileInputStream fis = new FileInputStream(_file);
         byte[] fileByte = new byte[fis.available()];
         
         window.log("Bytes Read: " + fis.read(fileByte) + "\n", Color.BLACK);
@@ -178,6 +180,19 @@ public class Client {
         ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
         oos.writeObject(fileByte);
         fis.close();
+        */
+    	
+    	out.flush();
+        BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
+        FileInputStream fis = new FileInputStream(_file);
+        BufferedInputStream bis = new BufferedInputStream(fis);
+        int n = -1;
+        byte[] buffer = new byte[4096];
+        while((n = bis.read(buffer)) > -1){
+        	bos.write(buffer, 0, n);
+        }
+        bis.close();
+        bos.close();
         
         window.log("Successfully uploaded file!" + "\n", Color.BLUE);
         

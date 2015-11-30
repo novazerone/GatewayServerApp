@@ -1,6 +1,7 @@
 package gatewayServer;
 
 import java.awt.Color;
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -59,24 +60,18 @@ public class ClientHandler extends Thread {
             	out.println("PROCEEDTOUPLOAD");
             	Gateway.log("Uploading...", Color.BLACK);
                 out.flush();
-            	ois = new ObjectInputStream(connection.getInputStream());
+				BufferedInputStream bis = new BufferedInputStream(connection.getInputStream());;
+				
 	            while(true){
-	            	// TODO:
-	            	// Add protocols
-	            	// Split to chunks.
-	            	Object o;
-					try {
-						o = ois.readObject();
-		                Gateway.log("Receiving file..." + "\n", Color.BLACK);
-		                byte[] file = (byte[]) o;
-		                fos = new FileOutputStream(fileName);
-		                fos.write(file);
-		                fos.close();
-		                
-		                Gateway.log("File succesfully saved." + "\n", Color.BLACK);
-					} catch (ClassNotFoundException e) {
-						e.printStackTrace();
+					fos = new FileOutputStream(fileName);
+					int n;
+					byte[] buffer = new byte[4096];
+					while((n = bis.read(buffer)) > 0){
+						fos.write(buffer, 0, n);
 					}
+					fos.close();
+					Gateway.log("File succesfully saved." + "\n", Color.BLACK);
+					break;
 	            }
             } else if (mode == "DOWNLOAD"){
             	
