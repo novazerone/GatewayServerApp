@@ -12,12 +12,12 @@ import java.net.Socket;
 import java.util.UUID;
 
 import app.Driver;
+import gatewayServer.Gateway;
 
 public class Client {
 
     public static void main(String[] args) throws Exception {
         Client client = new Client(UUID.randomUUID().toString());
-        client.open();
         
         Runtime.getRuntime().addShutdownHook(new Thread()
         {
@@ -27,8 +27,6 @@ public class Client {
             	client.close();
             }
         });
-        
-        client.run();
     }
 
     private String name;
@@ -41,9 +39,11 @@ public class Client {
     
     public Client(String _name) {
     	name = _name;
-    	window = new ClientWindow(this, "Client - " + name);
+    	window = new ClientWindow(this, "Client");
     	window.log("Client initialized." + "\n", Color.BLACK);
-    	window.log("UUID: " + name + "\n", Color.BLACK);
+    	
+        // Enable window operation.
+        window.setEnable(true);
     }
     
     /*
@@ -80,8 +80,6 @@ public class Client {
         
         window.log("Successfully initialized streams!" + "\n",  new Color(0 , 100, 0));
         
-        // Enable window operation.
-        window.setEnable(true);
         return true;
     }
     
@@ -148,8 +146,25 @@ public class Client {
     	if(_file == null)
     		return;
     	
+    	// Connect to the server.
+    	open();
+    	
+    	out.println("MODE:UPLOAD");
+    	out.println("FILENAME:" + _file.getName());
+    	
+    	while(true){
+    		String input = in.readLine();
+    		
+    		if(input == null){
+    			window.log("Failed to upload " + _file.getName() + "\n", Color.RED);
+    			return;
+    		}
+    		
+    		if(input.equals("PROCEEDTOUPLOAD"))
+    			break;
+    	}
+    	
     	// TODO:
-    	// Add protocol.
     	// Test file upload interruption and handle it.
     	// Test large file uploads.
     	// Source: http://stackoverflow.com/questions/10819516/sending-big-file-using-fileinputstream-objectoutputstream
@@ -165,5 +180,7 @@ public class Client {
         fis.close();
         
         window.log("Successfully uploaded file!" + "\n", Color.BLUE);
+        
+        close();
     }
 }

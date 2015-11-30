@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.UUID;
 
 public class ClientHandler extends Thread {
 	private String name;
@@ -28,60 +29,66 @@ public class ClientHandler extends Thread {
             in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             out = new PrintWriter(connection.getOutputStream(), true);
 
-            Gateway.log("A client is trying to connect." + "\n", Color.BLACK);
-            out.println("IDENTIFY");
-            while (true) {
-                String uuid = in.readLine();
-                
-                if(uuid == null){
-                    Gateway.log("Client failed to connect." + "\n", Color.BLACK);
-                    break;
-                }
-                
-                name = uuid;
-                Gateway.log("Client ", Color.BLACK);
-                Gateway.log(name, Color.BLUE);
-                Gateway.log(" connected." + "\n", Color.BLACK);
-                
-                // Signal the client that the connection was established.
-                out.println("CONNECTION_SUCCESS");
-                break;
-            }
-
-        	ois = new ObjectInputStream(connection.getInputStream());
+            Gateway.log("A client connected." + "\n", Color.BLACK);
+            name = UUID.randomUUID().toString();
+            
+            // Get mode and file name.
+            String mode = null;
+            String fileName = null;
             while(true){
-            	// TODO:
-            	// Add protocols
-            	// Split to chunks.
-            	Object o;
-				try {
-					o = ois.readObject();
-	                Gateway.log("Receiving file..." + "\n", Color.BLACK);
-	                byte[] file = (byte[]) o;
-	                fos = new FileOutputStream("file.aos");
-	                fos.write(file);
-	                fos.close();
-	                Gateway.log("File succesfully saved." + "\n", Color.BLACK);
-				} catch (ClassNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+            	String input = in.readLine();
             	
-				/*
-            	String message = in.readLine();
-            	if(message == null){
-            		break;
+            	if(input == null){
+            		Gateway.log("Client lost connection. \n", Color.BLACK);
+            		throw new Exception();
             	}
             	
-            	if(message.startsWith("MESSAGE")){
-            		Gateway.log(message.substring(8) + "\n", Color.BLACK);
-            	}*/
+            	if(input.startsWith("MODE:")){
+            		mode = input.substring(5);
+            	} else if(input.startsWith("FILENAME:")){
+            		fileName = input.substring(9);
+            	}
+            	
+            	
+            	if(mode != null && fileName != null)
+            		break;
+            }
+            
+            
+            if(mode.equals("UPLOAD")){
+            	out.println("PROCEEDTOUPLOAD");
+            	Gateway.log("Uploading...", Color.BLACK);
+                out.flush();
+            	ois = new ObjectInputStream(connection.getInputStream());
+	            while(true){
+	            	// TODO:
+	            	// Add protocols
+	            	// Split to chunks.
+	            	Object o;
+					try {
+						o = ois.readObject();
+		                Gateway.log("Receiving file..." + "\n", Color.BLACK);
+		                byte[] file = (byte[]) o;
+		                fos = new FileOutputStream(fileName);
+		                fos.write(file);
+		                fos.close();
+		                
+		                Gateway.log("File succesfully saved." + "\n", Color.BLACK);
+					} catch (ClassNotFoundException e) {
+						e.printStackTrace();
+					}
+	            }
+            } else if (mode == "DOWNLOAD"){
+            	
             }
 
         } catch (IOException e) {
             System.out.println(e);
             
-        } finally {
+        } catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
         	close();
         }
     }
