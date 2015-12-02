@@ -9,6 +9,7 @@ import app.ByteCache;
 import app.CacheManager;
 import app.Driver;
 import app.LogWindow;
+import database.ServerJDBCTemplate;
 
 public class Gateway extends Thread {
 	
@@ -78,9 +79,15 @@ public class Gateway extends Thread {
 		}
 
     	window.log("Successfully initialized Client Listener!" + "\n",  new Color(0 , 100, 0));
+		// Initially, all servers are down.
+		ServerJDBCTemplate server = new ServerJDBCTemplate();
+		server.downAllServers();
+		
 	}
 	
 	public void run(){
+		
+		
         serverListener.start();
         clientListener.start();
         
@@ -125,7 +132,7 @@ public class Gateway extends Thread {
 	
 	public void distribute(ByteCache _byteCache, List<database.models.Server> _servers){
 		Gateway.log("Sending file to server..." + "\n", Color.BLACK);
-		
+		Gateway.log(_servers.size()+"\n", Color.red);
 		serverListener.getServerHandler(_servers.get(0).getName()).uploadFile(_byteCache);
 	}
 	

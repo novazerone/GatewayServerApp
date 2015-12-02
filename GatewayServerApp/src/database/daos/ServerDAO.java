@@ -51,6 +51,8 @@ public interface ServerDAO {
      */
     public void update(Integer id, Boolean status);
 
+    public void downAllServers();
+
     public void updateUploadFinish(Integer file_id, Integer server_id, Boolean status);
 
     public List<Server_File> checkFile(Integer port);

@@ -197,6 +197,7 @@ public class ServerJDBCTemplate implements ServerDAO {
                 throw new SQLException(warning.getMessage());
             }
 
+
             String query2 = "SELECT * from servers ORDER BY total_file_size asc LIMIT " + available_server;
             System.out.println(query2);
             preparedStatement2 = connection.prepareStatement(query2);
@@ -220,6 +221,8 @@ public class ServerJDBCTemplate implements ServerDAO {
             e.printStackTrace();
         } finally {
             DbUtil.close(preparedStatement);
+            DbUtil.close(preparedStatement2);
+            DbUtil.close(preparedStatement3);
             DbUtil.close(connection);
         }
 
@@ -263,7 +266,55 @@ public class ServerJDBCTemplate implements ServerDAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            DbUtil.close(preparedStatement);
+            DbUtil.close(preparedStatement2);
+            DbUtil.close(connection);
         }
+
+
+    }
+
+    @Override
+    public void downAllServers() {
+
+        String query = "update servers set status = 0";
+        Connection connection = ConnectionFactory.getConnection();
+
+        try {
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.execute();
+            SQLWarning warning = preparedStatement.getWarnings();
+
+            if (warning != null) {
+                throw new SQLException(warning.getMessage());
+            }
+
+
+            query = "update server_file set status = 2";
+
+            try {
+                preparedStatement2 = connection.prepareStatement(query);
+                preparedStatement2.execute();
+
+                warning = preparedStatement2.getWarnings();
+
+                if (warning != null) {
+                    throw new SQLException(warning.getMessage());
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DbUtil.close(preparedStatement);
+            DbUtil.close(preparedStatement2);
+            DbUtil.close(connection);
+        }
+
 
     }
 
@@ -280,6 +331,25 @@ public class ServerJDBCTemplate implements ServerDAO {
             preparedStatement.setInt(3, server_id);
             preparedStatement.execute();
 
+
+            String query2 = "update servers set total_file_size = total_file_size + " +
+                    "(SELECT file_size from files where id = ?) where id = ?";
+            try {
+                preparedStatement2 = connection.prepareStatement(query2);
+                preparedStatement2.setInt(1, file_id);
+                preparedStatement2.setInt(2, server_id);
+                preparedStatement2.execute();
+
+                SQLWarning warning = preparedStatement.getWarnings();
+
+                if (warning != null) {
+                    throw new SQLException(warning.getMessage());
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+
             SQLWarning warning = preparedStatement.getWarnings();
 
             if (warning != null) {
@@ -287,6 +357,10 @@ public class ServerJDBCTemplate implements ServerDAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }finally {
+            DbUtil.close(preparedStatement);
+            DbUtil.close(preparedStatement2);
+            DbUtil.close(connection);
         }
 
 
@@ -407,7 +481,6 @@ public class ServerJDBCTemplate implements ServerDAO {
         } finally {
             DbUtil.close(connection);
             DbUtil.close(connection2);
-            DbUtil.close(preparedStatement);
             DbUtil.close(preparedStatement2);
             DbUtil.close(preparedStatement3);
             DbUtil.close(preparedStatement4);

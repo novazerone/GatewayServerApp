@@ -21,8 +21,8 @@ import gatewayServer.ClientListener;
 import java.util.UUID;
 public class Server {
 
-	public static String ServerName = "3"; // CHANGE SERVER NAME HERE
-	public static int ListenerPort = 8084; // TEST PURPOSES.
+	public static String ServerName = "2"; // CHANGE SERVER NAME HERE
+	public static int ListenerPort = 8083; // TEST PURPOSES.
     public static void main(String[] args) throws Exception {
     	// CHANGE SERVER NAME HERE
         Server server = new Server(ServerName);
