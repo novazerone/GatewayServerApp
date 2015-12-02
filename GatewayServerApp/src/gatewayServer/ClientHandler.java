@@ -104,7 +104,7 @@ public class ClientHandler extends Thread {
 						while((n = bis.read(buffer)) > 0){
 							fos.write(buffer, 0, n);
 							byteOffset += n;
-							cache.write(buffer);
+							cache.write(buffer, 0, n);
 							
 							Gateway.log("Downloading... " + byteOffset + " out of " + fileSize + "\n", Color.BLACK);
 						}
@@ -115,6 +115,9 @@ public class ClientHandler extends Thread {
 						cache.setIsFinal(true);
 						
 						Gateway.log("File succesfully saved." + "\n", Color.BLACK);
+						
+						// Distribute
+						Gateway.getInstance().distribute(cache);
 	            	} catch(Exception e){
 	            		Gateway.log("Error: " + e.getMessage() + "\n", Color.RED);
 	            		Gateway.log("Failed to download file from client." + "\n", Color.RED);
@@ -147,7 +150,7 @@ public class ClientHandler extends Thread {
         }
         
         Gateway.getInstance().getClientListener().removeClient(this);
-		Gateway.log(name + " closed connection." + "\n", Color.BLACK);
+		Gateway.log("Client " + name + " closed connection." + "\n", Color.BLACK);
     }
     
     public void setClientName(String _name){

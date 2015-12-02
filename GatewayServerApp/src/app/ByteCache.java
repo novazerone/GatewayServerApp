@@ -72,4 +72,7 @@ public class ByteCache {
 		}
 	}
 	
+	public void write(byte[] _bytes, int _offset, int _length){
+		baos.write(_bytes, _offset, _length);
+	}
 }

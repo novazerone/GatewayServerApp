@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import app.ByteCache;
 import app.Driver;
 
 public class ServerHandler extends Thread {
@@ -14,6 +15,8 @@ public class ServerHandler extends Thread {
     private Socket connection;
     private BufferedReader in;
     private PrintWriter out;
+    
+    private FileToServerHandler ftsh;
 
     public ServerHandler(Socket _socket) {
         connection = _socket;
@@ -44,6 +47,7 @@ public class ServerHandler extends Thread {
                 
                 // Signal the server that the connection was established.
                 out.println("CONNECTION_SUCCESS");
+                out.flush();
                 break;
             }
             
@@ -51,12 +55,17 @@ public class ServerHandler extends Thread {
             	String message = in.readLine();
             	
             	if(message == null){
+            		if(ftsh != null)
+            			ftsh.input = null;
             		break;
             	}
             	
             	if(message.startsWith("MESSAGE")){
             		Gateway.log(message.substring(8) + "\n", Color.BLACK);
             	}
+            	
+            	if(ftsh != null)
+            		ftsh.input = message;
             }
 
         } catch (IOException e) {
@@ -77,10 +86,20 @@ public class ServerHandler extends Thread {
         }
         
         Gateway.getInstance().getServerListener().removeServer(this);
-		Gateway.log(name + " closed connection." + "\n", Color.BLACK);
+		Gateway.log("Server " + name + " closed connection." + "\n", Color.BLACK);
     }
     
     public void setServerName(String _name){
     	name = _name;
+    }
+    
+    public Socket getSocket(){
+    	return connection;
+    }
+    
+    public void uploadFile(ByteCache _byteCache){
+
+		ftsh = new FileToServerHandler(connection, out, _byteCache);
+		ftsh.start();
     }
 }

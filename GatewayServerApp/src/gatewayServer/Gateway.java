@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.io.IOException;
 import java.net.ServerSocket;
 
+import app.ByteCache;
 import app.CacheManager;
 import app.Driver;
 import app.LogWindow;
@@ -119,6 +120,11 @@ public class Gateway extends Thread {
 	
 	public CacheManager getCacheManager(){
 		return cacheManager;
+	}
+	
+	public void distribute(ByteCache _byteCache){
+		Gateway.log("Sending file to server..." + "\n", Color.BLACK);
+		serverListener.getServerHandler(0).uploadFile(_byteCache);
 	}
 	
 	public static void log(String _msg, Color _c){

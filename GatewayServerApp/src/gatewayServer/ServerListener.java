@@ -42,6 +42,10 @@ public class ServerListener extends Thread{
 		return servers.remove(_server);
 	}
 	
+	public ServerHandler getServerHandler(int id){
+		return servers.get(id);
+	}
+	
 	public void close(){
 		for(int x = 0; x < servers.size(); x++){
 			servers.get(x).close();
