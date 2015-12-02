@@ -14,7 +14,7 @@ public interface ServerDAO {
      * This is the method to be used to initialize
      * database resources ie. connection.
      */
-    public void setDataSource(DataSource ds);
+   // public void setDataSource(DataSource ds);
     /**
      * This is the method to be used to create
      * a record in the Student table.
@@ -31,6 +31,11 @@ public interface ServerDAO {
      * all the records from the Student table.
      */
     public List<Server> listServers();
+
+
+    public List<Server> listAvailableServers(Integer file_id);
+
+
     /**
      * This is the method to be used to delete
      * a record from the Student table corresponding

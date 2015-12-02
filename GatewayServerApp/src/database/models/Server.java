@@ -8,6 +8,8 @@ public class Server {
     private Integer id;
     private String name;
     private boolean status;
+    private Integer total_fize_size;
+    private Integer port;
 
     /**
      * Sets new name.
@@ -61,5 +63,41 @@ public class Server {
      */
     public Integer getId() {
         return id;
+    }
+
+    /**
+     * Sets new total_fize_size.
+     *
+     * @param total_fize_size New value of total_fize_size.
+     */
+    public void setTotal_fize_size(Integer total_fize_size) {
+        this.total_fize_size = total_fize_size;
+    }
+
+    /**
+     * Gets total_fize_size.
+     *
+     * @return Value of total_fize_size.
+     */
+    public Integer getTotal_fize_size() {
+        return total_fize_size;
+    }
+
+    /**
+     * Gets port.
+     *
+     * @return Value of port.
+     */
+    public Integer getPort() {
+        return port;
+    }
+
+    /**
+     * Sets new port.
+     *
+     * @param port New value of port.
+     */
+    public void setPort(Integer port) {
+        this.port = port;
     }
 }

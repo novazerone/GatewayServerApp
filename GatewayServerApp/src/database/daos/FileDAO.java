@@ -20,7 +20,7 @@ public interface FileDAO {
      * This is the method to be used to create
      * a record in the Student table.
      */
-    public void create(String file_name, Integer file_size, Integer status);
+    public int create(String file_name, Integer file_size, Integer status);
     /**
      * This is the method to be used to list down
      * a record from the Student table corresponding
@@ -31,7 +31,7 @@ public interface FileDAO {
      * This is the method to be used to list down
      * all the records from the Student table.
      */
-    public List<File> listFiles();
+    public List<File> listFiles(Integer server_id);
     /**
      * This is the method to be used to delete
      * a record from the Student table corresponding

@@ -38,17 +38,24 @@ public class FileJDBCTemplate implements FileDAO {
 //    }
 
     @Override
-    public void create(String file_name, Integer file_size, Integer status) {
+    public int create(String file_name, Integer file_size, Integer status) {
         String query = "insert into files (file_name, file_size, status) values (?, ?, ?)";
 
         connection = ConnectionFactory.getConnection();
-
+        int last_inserted_id = 0;
         try {
-            preparedStatement = connection.prepareStatement(query);
+            preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, file_name);
             preparedStatement.setInt(2, file_size);
             preparedStatement.setInt(3, status);
             preparedStatement.execute();
+
+            ResultSet rs = preparedStatement.getGeneratedKeys();
+
+            if(rs.next()){
+                 last_inserted_id = rs.getInt(1);
+            }
+
 
             SQLWarning warning = preparedStatement.getWarnings();
             if(warning != null){
@@ -62,6 +69,8 @@ public class FileJDBCTemplate implements FileDAO {
             DbUtil.close(connection);
         }
 
+        return last_inserted_id;
+
     }
 
     @Override
@@ -70,7 +79,7 @@ public class FileJDBCTemplate implements FileDAO {
     }
 
     @Override
-    public List<File> listFiles() {
+    public List<File> listFiles(Integer server_id) {
         return null;
     }
 

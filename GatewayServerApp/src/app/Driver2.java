@@ -1,40 +1,18 @@
 package app;
 
-import database.ConnectionFactory;
+import controllers.UploadController;
+import database.models.Server;
 
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.List;
 
 public class Driver2 {
 
 
 	public static void main(String[] args) {
 
-		Connection connection;
-		Statement statement;
-		ResultSet R;
-
-		connection = ConnectionFactory.getConnection();
-		try {
-			statement = connection.createStatement();
-			//R = statement.executeQuery("SELECT * FROM files");
-
-
-			
-			 // Result set get the result of the SQL query
-		      R = statement
-		          .executeQuery("select * from files");
-		      while(R.next()){
-		    	  System.out.println(R.getString("file_name"));
-		      }
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
+		UploadController uploadController = new UploadController();
+		List<Server> server = uploadController.uploadFile("file_new12334", 123);
+		System.out.print(server.toArray().toString());
 	}
 	
 }
