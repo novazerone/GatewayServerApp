@@ -3,6 +3,7 @@ package gatewayServer;
 import java.awt.Color;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.List;
 
 import app.ByteCache;
 import app.CacheManager;
@@ -122,17 +123,16 @@ public class Gateway extends Thread {
 		return cacheManager;
 	}
 	
-	public void distribute(ByteCache _byteCache){
+	public void distribute(ByteCache _byteCache, List<database.models.Server> _servers){
 		Gateway.log("Sending file to server..." + "\n", Color.BLACK);
 		
-		// TODO: Randomize on who gets the file.
-		serverListener.getServerHandler(0).uploadFile(_byteCache);
+		serverListener.getServerHandler(_servers.get(0).getName()).uploadFile(_byteCache);
 	}
 	
 	public String getRemainingServers(){
 		// TODO: Query for remaining servers.
 		// Return CSV of ports.
-		return "8083,8084";
+		return "8084";
 	}
 	
 	public static void log(String _msg, Color _c){

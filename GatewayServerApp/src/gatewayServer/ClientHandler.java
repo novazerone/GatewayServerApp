@@ -14,6 +14,7 @@ import java.util.UUID;
 import app.ByteCache;
 import app.CacheManager;
 import app.Driver;
+import controllers.UploadController;
 
 public class ClientHandler extends Thread {
 	private String name;
@@ -116,8 +117,12 @@ public class ClientHandler extends Thread {
 						
 						Gateway.log("File succesfully saved." + "\n", Color.BLACK);
 						
+						// Save to database.
+						UploadController uploadController = new UploadController();
+						database.models.Server_File dbFile = uploadController.uploadFile(fileName, (int)fileSize);
+						
 						// Distribute
-						Gateway.getInstance().distribute(cache);
+						Gateway.getInstance().distribute(cache, dbFile.getDestinationServers());
 	            	} catch(Exception e){
 	            		Gateway.log("Error: " + e.getMessage() + "\n", Color.RED);
 	            		Gateway.log("Failed to download file from client." + "\n", Color.RED);

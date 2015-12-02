@@ -112,6 +112,10 @@ public class ServerHandler extends Thread {
     	name = _name;
     }
     
+    public String getServerName(){
+    	return name;
+    }
+    
     public Socket getSocket(){
     	return connection;
     }

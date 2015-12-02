@@ -65,7 +65,7 @@ public class ServerJDBCTemplate implements ServerDAO {
     public Server getServer(String server_name) {
         String query = "SELECT * FROM servers WHERE name = ?";
         ResultSet rs;
-        Server server = null;
+        Server server = new Server();
 
         Connection connection = ConnectionFactory.getConnection();
 
@@ -104,7 +104,7 @@ public class ServerJDBCTemplate implements ServerDAO {
 
         String query = "SELECT * FROM servers WHERE port = ?";
         ResultSet rs;
-        Server server = null;
+        Server server = new Server();
 
         Connection connection = ConnectionFactory.getConnection();
 
@@ -254,8 +254,7 @@ public class ServerJDBCTemplate implements ServerDAO {
                 preparedStatement2.setInt(2,id);
             }
 
-            preparedStatement2.executeQuery();
-
+            preparedStatement2.execute();
 
             SQLWarning warning = preparedStatement.getWarnings();
 
