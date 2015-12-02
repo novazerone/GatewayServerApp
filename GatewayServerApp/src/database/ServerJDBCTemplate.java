@@ -273,7 +273,7 @@ public class ServerJDBCTemplate implements ServerDAO {
                         }
                         where = where.substring(0, where.length() - 3);
 
-                        String query5 = "SELECT * FROM servers WHERE "  + where + " AND status = 1";
+                        String query5 = "SELECT * FROM servers WHERE "  + where + " AND status = 1 LIMIT" + neededServer;
                         preparedStatement5 = connection2.prepareStatement(query5);
                         ResultSet rsServers = preparedStatement5.executeQuery();
 
