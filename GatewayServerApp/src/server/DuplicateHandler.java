@@ -26,6 +26,7 @@ public class DuplicateHandler extends Thread {
     
     public DuplicateHandler(Socket _socket) {
     	socket = _socket;
+    	Server.window.log("Connection established at port " + Server.ListenerPort, Color.BLUE);
     }
 
     @Override
@@ -68,9 +69,10 @@ public class DuplicateHandler extends Thread {
 
        if(line.startsWith("REQUEST")){
         	String requestContent = line.substring(8);
-        	System.out.println("Gateway requests " + requestContent);
+        	Server.window.log("Gateway requests " + requestContent, Color.BLACK);
         	String[] contentArray = requestContent.split(",");
         	String requestType = contentArray[0];
+        	
         	if(requestType.equals("UPLOAD")){
             	fileName = contentArray[1];
             	fileSize = contentArray[2];
@@ -80,6 +82,7 @@ public class DuplicateHandler extends Thread {
         	}
         }
 
+       	Server.window.log(line, Color.BLACK);
         return true;
     }
     
@@ -101,20 +104,17 @@ public class DuplicateHandler extends Thread {
 				fos.write(buffer, 0, n);
 				byteOffset += n;
 				
-				//window.log("Downloading... " + byteOffset + " out of " + fileSize + "\n", Color.BLACK);
+				Server.window.log("Downloading... " + byteOffset + " out of " + fileSize + "\n", Color.BLACK);
 			}
 			
-			//fos.close();
+			fos.close();
 			
 			// Finalize this cache. 
 			
-			//window.log("File succesfully saved." + "\n", Color.BLACK);
-			
-			// Attempt to duplicate
-			out.println("DUPLICATEFILE:" + fileName);
+			Server.window.log("File succesfully saved." + "\n", Color.BLACK);
     	} catch(Exception e){
-    		//window.log("Error: " + e.getMessage() + "\n", Color.RED);
-    		//window.log("Failed to download file from client." + "\n", Color.RED);
+    		Server.window.log("Error: " + e.getMessage() + "\n", Color.RED);
+    		Server.window.log("Failed to download file from client." + "\n", Color.RED);
     		e.printStackTrace();
     		return false;
     	}

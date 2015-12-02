@@ -1,5 +1,6 @@
 package server;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.SocketException;
@@ -18,8 +19,10 @@ public class DuplicateListener extends Thread{
 		socket = _socket;
 	}
 	
+	@Override
 	public void run(){
         try {
+    		Server.window.log("Duplication Listener On\n", Color.BLUE);
         	// Listen for server connections
             while (true) {
             	DuplicateHandler server = new DuplicateHandler(socket.accept());

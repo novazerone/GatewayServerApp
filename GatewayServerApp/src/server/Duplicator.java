@@ -1,6 +1,9 @@
 package server;
 
+import java.awt.Color;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -27,8 +30,9 @@ public class Duplicator extends Thread{
 			// Connect to the port.
 			try {
 				socket = new Socket(Driver.getHost(), Integer.parseInt(ports[x]));
-				FileToServerHandler ftsh = new FileToServerHandler(socket, new PrintWriter(socket.getOutputStream(), true), cache);
-				ftsh.run(); // Do this sequentially.
+				Server.window.log("Connected to port " + ports[x] + "\n", Color.BLACK);
+				DuplicateToServerHandler dtsh = new DuplicateToServerHandler(socket, new BufferedReader(new InputStreamReader(socket.getInputStream())), new PrintWriter(socket.getOutputStream(), true), cache);
+				dtsh.run(); // Do this sequentially.
 			} catch (NumberFormatException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

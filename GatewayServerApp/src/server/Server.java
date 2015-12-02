@@ -45,7 +45,7 @@ public class Server {
     private BufferedReader in;
     private PrintWriter out;
 
-    private LogWindow window;
+    public static LogWindow window;
 
     private boolean isDownloading = false;
 	private String fileName = "";
@@ -101,6 +101,7 @@ public class Server {
 		try {
 			serverSocket = new ServerSocket(ListenerPort);
 			duplicateListener = new DuplicateListener(serverSocket);
+			duplicateListener.start();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -115,6 +116,7 @@ public class Server {
     public void close(){
     	if(socket != null){
 			try {
+				duplicateListener.close();
 				socket.close();
 			} catch (IOException e) {
 				window.log("Failed to close connection." + "\n", Color.RED);
