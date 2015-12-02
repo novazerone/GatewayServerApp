@@ -26,7 +26,9 @@ public interface ServerDAO {
      * a record from the Student table corresponding
      * to a passed student id.
      */
-    public Server getServer(Integer id);
+    public Server getServer(String server_name);
+
+    public Server getServer(Integer port);
     /**
      * This is the method to be used to list down
      * all the records from the Student table.
