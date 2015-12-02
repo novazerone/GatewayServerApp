@@ -9,15 +9,34 @@ import java.util.List;
 public class Server_File {
 
     private Integer file_id;
-    private List<Server> servers = new ArrayList<Server>();
+    private List<Server> destinationServers = new ArrayList<Server>();
+    private List<Server> sourceServers = new ArrayList<Server>();
 
     /**
-     * Sets new servers.
+     * Sets new sourceServers.
      *
-     * @param servers New value of servers.
+     * @param sourceServers New value of sourceServers.
      */
-    public void setServers(List<Server> servers) {
-        this.servers = servers;
+    public void setSourceServers(List<Server> sourceServers) {
+        this.sourceServers = sourceServers;
+    }
+
+    /**
+     * Gets destinationServers.
+     *
+     * @return Value of destinationServers.
+     */
+    public List<Server> getDestinationServers() {
+        return destinationServers;
+    }
+
+    /**
+     * Gets file_id.
+     *
+     * @return Value of file_id.
+     */
+    public Integer getFile_id() {
+        return file_id;
     }
 
     /**
@@ -30,20 +49,20 @@ public class Server_File {
     }
 
     /**
-     * Gets servers.
+     * Sets new destinationServers.
      *
-     * @return Value of servers.
+     * @param destinationServers New value of destinationServers.
      */
-    public List<Server> getServers() {
-        return servers;
+    public void setDestinationServers(List<Server> destinationServers) {
+        this.destinationServers = destinationServers;
     }
 
     /**
-     * Gets file_id.
+     * Gets sourceServers.
      *
-     * @return Value of file_id.
+     * @return Value of sourceServers.
      */
-    public Integer getFile_id() {
-        return file_id;
+    public List<Server> getSourceServers() {
+        return sourceServers;
     }
 }

@@ -225,6 +225,7 @@ public class ServerJDBCTemplate implements ServerDAO {
         ResultSet rs;
         Integer available_server = 0;
         List<Server> servers = new ArrayList<Server>();
+        List<Server> servers2 = new ArrayList<Server>();
         List<Server_File> server_files = new ArrayList<Server_File>();
         Connection connection = ConnectionFactory.getConnection();
 
@@ -281,10 +282,19 @@ public class ServerJDBCTemplate implements ServerDAO {
                         preparedStatement4 = connection2.prepareStatement(query4);
                         preparedStatement4.setInt(1, file_id);
                         ResultSet rsWithFile = preparedStatement4.executeQuery();
+                        int k = 0;
                         while (rsWithFile.next()) {
                             where = where + " id <> " + rsWithFile.getInt("server_id") + " AND";
-                            i++;
+                            ServerMapper serverMapper = new ServerMapper();
+                            Server server = serverMapper.mapRow(rsWithFile, k);
+                            servers.add(server);
+                            k++;
+
                         }
+                        Server_File server_file = new Server_File();
+                        server_file.setSourceServers(servers);
+
+
                         where = where.substring(0, where.length() - 3);
 
                         String query5 = "SELECT * FROM servers WHERE "  + where + " AND status = 1 LIMIT " + neededServer;
@@ -296,14 +306,16 @@ public class ServerJDBCTemplate implements ServerDAO {
                         while (rsServers.next()) {
                             System.out.println(rs.toString());
                             ServerMapper serverMapper = new ServerMapper();
-                            Server server = serverMapper.mapRow(rsServers, j);
-                            servers.add(server);
+                            Server server2 = serverMapper.mapRow(rsServers, j);
+                            servers2.add(server2);
                             j++;
                         }
-                        Server_File server_file = new Server_File();
-                        server_file.setServers(servers);
+
+                        server_file.setDestinationServers(servers2);
                         server_file.setFile_id(file_id);
+
                         servers = new ArrayList<Server>();
+                        servers2 = new ArrayList<Server>();
                         server_files.add(server_file);
 
                     }
