@@ -1,0 +1,29 @@
+1.) Client upload to gateway server
+	- Gateway server puts files details in server (after uploadGateway server deletes the file)		(DB use create files)
+	- Gateway server server gets the list of servers that he should upload the files to	(DB use get 2/3 of servers base on capacity)
+		- Gateway serve upload to the 1st server					
+			- the 1st Server upload the file to the remaining servers		
+			- the 1st Server send a notice to the gateway server			(DB use update file_server status)
+
+2.) When a server goes down (Gateway server continuesly checks if servers goes down)
+	- recheck all files if 2/3								(DB use checkFile)
+	 
+
+UploadController.uploadFile -> 
+
+
+
+FileJDBCTemplate.create(String file_name, Integer file_size, Integer status)  -> Create a File // no need to use this its already used in UploadController.uploadFile
+
+
+ServerJDBCTemplate.create(String server_name, Integer port) -> Create a Server 
+
+ServerJDBCTemplate.listServers() -> List all Server
+ServerJDBCTemplate.listAvailableServers() -> list all available servers -> no need to use this its already used in UploadController.uploadFile
+ServerJDBCTemplate.update(Integer id, Boolean status) -> use this to change the status of server // 1 if alive : 0 if dead // if nag dead yung servers magiging 2 yung status nung sa server_file (status nung file sa server)
+ServerJDBCTemplate.updateUploadFinish(Integer file_id, Integer server_id, Boolean status)  // use this if a server to server or gateway to server finished uploading
+ServerJDBCTemplate.checkFile(Integer port) -> Use this if a server goes down // to ensure 2/3 maybe add a function that check every server every x time
+
+
+
+
