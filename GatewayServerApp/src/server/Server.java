@@ -20,8 +20,8 @@ import gatewayServer.ClientListener;
 import java.util.UUID;
 public class Server {
 
-	public static String ServerName = "3"; // CHANGE SERVER NAME HERE
-	public static int ListenerPort = 8084; // TEST PURPOSES.
+	public static String ServerName = "2"; // CHANGE SERVER NAME HERE
+	public static int ListenerPort = 8083; // TEST PURPOSES.
     public static void main(String[] args) throws Exception {
     	// CHANGE SERVER NAME HERE
         Server server = new Server(ServerName);
@@ -221,7 +221,7 @@ public class Server {
     	try{
         	int byteOffset = 0;
             window.log("Creating Stream... \n", Color.blue);
-    		FileOutputStream fos = new FileOutputStream("C:\\" + ServerName + "\\" + fileName);
+    		FileOutputStream fos = new FileOutputStream(".\\_Servers\\" + ServerName + "\\" + fileName);
     		fos.flush();
 
             window.log("Creating buffer... \n", Color.blue);

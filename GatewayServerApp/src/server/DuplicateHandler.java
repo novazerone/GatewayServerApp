@@ -103,7 +103,7 @@ public class DuplicateHandler extends Thread {
         
     	try{
         	int byteOffset = 0;
-    		FileOutputStream fos = new FileOutputStream("C:\\" + Server.ServerName + "\\" + fileName);
+    		FileOutputStream fos = new FileOutputStream(".\\_Servers\\" + Server.ServerName + "\\" + fileName);
     		fos.flush();
 
 			byte[] buffer = new byte[Driver.getServerTransferBlockSize()];

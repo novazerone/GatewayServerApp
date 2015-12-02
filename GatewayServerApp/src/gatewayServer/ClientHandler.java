@@ -87,7 +87,7 @@ public class ClientHandler extends Thread {
 				
 	            while(true){
 	            	try{
-						fos = new FileOutputStream(fileName, byteOffset > 0);
+						fos = new FileOutputStream(".\\_Gateway\\"+fileName, byteOffset > 0);
 						
 						byte[] buffer = new byte[Driver.getClientTransferBlockSize()];
 						int n;

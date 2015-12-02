@@ -3,7 +3,6 @@ package gatewayServer;
 import java.awt.Color;
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.util.Random;
 
 import app.ByteCache;
 import app.CacheManager;
