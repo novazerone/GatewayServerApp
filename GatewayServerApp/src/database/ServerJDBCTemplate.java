@@ -276,6 +276,50 @@ public class ServerJDBCTemplate implements ServerDAO {
     }
 
     @Override
+    public void downAllServers() {
+
+        String query = "update servers set status = 1";
+        Connection connection = ConnectionFactory.getConnection();
+
+        try {
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.execute();
+
+            SQLWarning warning = preparedStatement.getWarnings();
+
+            if (warning != null) {
+                throw new SQLException(warning.getMessage());
+            }
+
+
+            query = "update server_file set status = 2";
+
+            try {
+                preparedStatement2 = connection.prepareStatement(query);
+                preparedStatement2.execute();
+
+                warning = preparedStatement2.getWarnings();
+
+                if (warning != null) {
+                    throw new SQLException(warning.getMessage());
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DbUtil.close(preparedStatement);
+            DbUtil.close(preparedStatement2);
+            DbUtil.close(connection);
+        }
+
+
+    }
+
+    @Override
     public void updateUploadFinish(Integer file_id, Integer server_id, Boolean status) {
 
         String query = "update server_file set status = ? where file_id = ? AND server_id = ?";
