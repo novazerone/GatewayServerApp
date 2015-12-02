@@ -168,6 +168,20 @@ public class ServerJDBCTemplate implements ServerDAO {
             preparedStatement = connection.prepareStatement(query);
             preparedStatement.setBoolean(1, status);
             preparedStatement.setInt(2, id);
+            preparedStatement.execute();
+
+            String query2 = "UPDATE server_file set status = ? WHERE server_id = ?";
+            preparedStatement2 = connection.prepareStatement(query2);
+            if(!status){
+                preparedStatement2.setInt(1,2);
+                preparedStatement2.setInt(1,id);
+            }else {
+                preparedStatement2.setInt(1,1);
+                preparedStatement2.setInt(1,id);
+            }
+
+            preparedStatement2.executeQuery();
+
 
             SQLWarning warning = preparedStatement.getWarnings();
 
@@ -273,7 +287,8 @@ public class ServerJDBCTemplate implements ServerDAO {
                         }
                         where = where.substring(0, where.length() - 3);
 
-                        String query5 = "SELECT * FROM servers WHERE "  + where + " AND status = 1 LIMIT" + neededServer;
+                        String query5 = "SELECT * FROM servers WHERE "  + where + " AND status = 1 LIMIT " + neededServer;
+                        System.out.println(query5);
                         preparedStatement5 = connection2.prepareStatement(query5);
                         ResultSet rsServers = preparedStatement5.executeQuery();
 
