@@ -31,7 +31,11 @@ public class Duplicator extends Thread{
 			try {
 				socket = new Socket(Driver.getHost(), Integer.parseInt(ports[x]));
 				Server.window.log("Connected to port " + ports[x] + "\n", Color.BLACK);
-				DuplicateToServerHandler dtsh = new DuplicateToServerHandler(socket, new BufferedReader(new InputStreamReader(socket.getInputStream())), new PrintWriter(socket.getOutputStream(), true), cache);
+				
+				DuplicateToServerHandler dtsh = new DuplicateToServerHandler(
+						socket, 
+						cache);
+				
 				dtsh.run(); // Do this sequentially.
 			} catch (NumberFormatException e) {
 				// TODO Auto-generated catch block
