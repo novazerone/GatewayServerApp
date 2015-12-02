@@ -17,6 +17,8 @@ public class ServerHandler extends Thread {
     private PrintWriter out;
     
     private FileToServerHandler ftsh;
+    
+    private int listenerPort = 0;	// The port in which this server will listen for duplications.
 
     public ServerHandler(Socket _socket) {
         connection = _socket;
@@ -33,9 +35,10 @@ public class ServerHandler extends Thread {
             out.println("IDENTIFY");
             while (true) {
                 String identification = in.readLine();
-                String[] parts = identification.split("[|]");
+                String[] parts = identification.split(",");
                 String serverName = parts[0];
                 String password = parts[1];
+                listenerPort = Integer.parseInt(parts[2]);
                 
                 if (!password.equals(Driver.getServerPassword()))
                 	continue; // TODO: Close connection on failure. Or something.
@@ -62,6 +65,17 @@ public class ServerHandler extends Thread {
             	
             	if(message.startsWith("MESSAGE")){
             		Gateway.log(message.substring(8) + "\n", Color.BLACK);
+            	} else if(message.startsWith("DUPLICATEFILE")){
+            		String fileName = message.substring(14);
+            		// TODO: Query stuff. If file is not 2/3, respond with another server's port 
+            		// so that this guy can establish a connection with it independently.
+            		if(Gateway.getInstance().getServerListener().getSize() < 2)
+            			out.println("DUPLICATERESPONSE:SUCCESS");
+            		else {
+            			String ports = Gateway.getInstance().getRemainingServers();
+            			// TODO: Respond with a CSV of server ports.
+            			out.println("DUPLICATERESPONSE:" + ports);
+            		}
             	}
             	
             	if(ftsh != null)
@@ -95,6 +109,10 @@ public class ServerHandler extends Thread {
     
     public Socket getSocket(){
     	return connection;
+    }
+    
+    public int getDuplicationPort(){
+    	return listenerPort;
     }
     
     public void uploadFile(ByteCache _byteCache){
