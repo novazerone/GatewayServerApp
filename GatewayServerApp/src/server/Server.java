@@ -15,13 +15,14 @@ import java.net.Socket;
 import app.ByteCache;
 import app.Driver;
 import app.LogWindow;
+import database.ServerJDBCTemplate;
 import gatewayServer.ClientListener;
 
 import java.util.UUID;
 public class Server {
 
-	public static String ServerName = "2"; // CHANGE SERVER NAME HERE
-	public static int ListenerPort = 8083; // TEST PURPOSES.
+	public static String ServerName = "3"; // CHANGE SERVER NAME HERE
+	public static int ListenerPort = 8084; // TEST PURPOSES.
     public static void main(String[] args) throws Exception {
     	// CHANGE SERVER NAME HERE
         Server server = new Server(ServerName);
@@ -54,12 +55,26 @@ public class Server {
 	
 	private DuplicateListener duplicateListener;
 	private ServerSocket serverSocket;
+	
+	private ServerJDBCTemplate dbServer;
+	private int dbServerId;
     
     public Server(String _name) {
     	name = _name;
     	window = new LogWindow("Server - " + name);
     	window.log("Server initialized." + "\n", Color.BLACK);
     	window.log("UUID: " + name + "\n", Color.BLACK);
+    	
+    	dbServer = new ServerJDBCTemplate();
+    	database.models.Server dbServerObj = dbServer.getServer(ServerName);
+    	if(dbServerObj == null){
+    		dbServerId = dbServer.create(ServerName, ListenerPort);
+    		dbServer.update(dbServerId, true);
+    		window.log("Server is new. Automatically registered in database.\n", Color.BLACK);
+    	} else{
+    		dbServerId = dbServerObj.getId();
+    		dbServer.update(dbServerId, true);
+    	}
     }
     
     /*
@@ -116,6 +131,7 @@ public class Server {
     public void close(){
     	if(socket != null){
 			try {
+				dbServer.update(dbServerId, false);
 				duplicateListener.close();
 				socket.close();
 			} catch (IOException e) {

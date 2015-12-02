@@ -9,6 +9,7 @@ import java.net.Socket;
 
 import app.ByteCache;
 import app.Driver;
+import database.ServerJDBCTemplate;
 
 public class ServerHandler extends Thread {
 	private String name;
@@ -19,6 +20,8 @@ public class ServerHandler extends Thread {
     private FileToServerHandler ftsh;
     
     private int listenerPort = 0;	// The port in which this server will listen for duplications.
+	private ServerJDBCTemplate dbServer;
+	private int dbServerId;
 
     public ServerHandler(Socket _socket) {
         connection = _socket;
@@ -47,7 +50,8 @@ public class ServerHandler extends Thread {
                 Gateway.log("Server ", Color.BLACK);
                 Gateway.log(name, Color.BLUE);
                 Gateway.log(" connected." + "\n", Color.BLACK);
-                
+
+            	dbServer = new ServerJDBCTemplate();
                 // Signal the server that the connection was established.
                 out.println("CONNECTION_SUCCESS");
                 out.flush();
@@ -93,6 +97,7 @@ public class ServerHandler extends Thread {
     public void close(){
         try {
             connection.close();
+            dbServer.update(dbServer.getServer(name).getId(), false);
             if(out != null)
             	out.println("CLOSE");
         } catch (IOException e) {
