@@ -62,8 +62,42 @@ public class ServerJDBCTemplate implements ServerDAO {
     }
 
     @Override
-    public Server getServer(Integer id) {
-        return null;
+    public Server getServer(Integer port_id) {
+
+        String query = "SELECT * FROM servers WHERE port = ?";
+        ResultSet rs;
+        Server server = new Server();
+
+        Connection connection = ConnectionFactory.getConnection();
+
+        try {
+
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1,port_id);
+            rs = preparedStatement.executeQuery();
+            int i = 0;
+            while (rs.next()) {
+                System.out.println(rs.toString());
+                ServerMapper serverMapper = new ServerMapper();
+                server = serverMapper.mapRow(rs, i);
+                i++;
+            }
+
+            SQLWarning warning = preparedStatement.getWarnings();
+
+            if (warning != null) {
+                throw new SQLException(warning.getMessage());
+            }
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DbUtil.close(preparedStatement);
+            DbUtil.close(connection);
+        }
+
+        return server;
     }
 
     @Override
@@ -84,9 +118,11 @@ public class ServerJDBCTemplate implements ServerDAO {
                 ServerMapper serverMapper = new ServerMapper();
                 Server server = serverMapper.mapRow(rs, i);
                 i++;
+                servers.add(server);
             }
+            
             SQLWarning warning = preparedStatement.getWarnings();
-
+            	
             if (warning != null) {
                 throw new SQLException(warning.getMessage());
             }
