@@ -3,6 +3,7 @@ package server;
 import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -13,12 +14,18 @@ import java.net.Socket;
 import app.ByteCache;
 import app.Driver;
 import app.LogWindow;
+import gatewayServer.Gateway;
 public class Server {
 
 	public static String ServerName = "2"; // CHANGE SERVER NAME HERE
 	public static int ListenerPort = 8083; // TEST PURPOSES.
+	
     public static void main(String[] args) throws Exception {
-    	// CHANGE SERVER NAME HERE
+//    	ServerName = Gateway.getInstance().getServerName();
+//    	ListenerPort = Gateway.getInstance().getListenerPort();
+//    	System.out.println(ServerName+" "+ListenerPort);
+//    	Gateway.getInstance().createServer();
+    	
         Server server = new Server(ServerName);
         server.open();
         
@@ -216,7 +223,9 @@ public class Server {
     	try{
         	int byteOffset = 0;
             window.log("Creating Stream... \n", Color.blue);
-    		FileOutputStream fos = new FileOutputStream(".\\_Servers\\" + ServerName + "\\" + fileName);
+            File directory = new File(".\\_Servers\\" + ServerName);
+            directory.mkdir();
+    		FileOutputStream fos = new FileOutputStream(directory +"\\" + fileName);
     		fos.flush();
 
             window.log("Creating buffer... \n", Color.blue);

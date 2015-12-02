@@ -138,4 +138,27 @@ public class Gateway extends Thread {
 	public static void log(String _msg, Color _c){
 		Gateway.getInstance().window.log(_msg, _c);
 	}
+	
+//	private static int ServerName = 1;
+//	private static int ListenerPort = 8082;
+//	
+//	/**
+//	 * @return the serverName
+//	 */
+//	public String getServerName() {
+//		return Integer.toString(ServerName);
+//	}
+//
+//	/**
+//	 * @return the serverListenerPort
+//	 */
+//	public int getListenerPort() {
+//		return ListenerPort;
+//	}
+//	
+//	public synchronized void createServer() {
+//		ServerName+=1;
+//		ListenerPort+=1;
+//		System.out.println(ServerName+" "+ListenerPort);
+//	}
 }

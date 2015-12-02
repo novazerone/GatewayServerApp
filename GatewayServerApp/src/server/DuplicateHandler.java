@@ -3,6 +3,7 @@ package server;
 import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -102,7 +103,9 @@ public class DuplicateHandler extends Thread {
         
     	try{
         	int byteOffset = 0;
-    		FileOutputStream fos = new FileOutputStream(".\\_Servers\\" + Server.ServerName + "\\" + fileName);
+        	File directory = new File(".\\_Servers\\" + Server.ServerName);
+            directory.mkdir();
+    		FileOutputStream fos = new FileOutputStream(directory +"\\" + fileName);
     		fos.flush();
 
 			byte[] buffer = new byte[Driver.getServerTransferBlockSize()];
@@ -121,7 +124,7 @@ public class DuplicateHandler extends Thread {
 			
 			// Finalize this cache. 
 			
-			Server.window.log("File succesfully saved." + "\n", Color.BLACK);
+			Server.window.log("File succesfully saved." + "\n", Color.BLUE);
     	} catch(Exception e){
     		Server.window.log("Error: " + e.getMessage() + "\n", Color.RED);
     		Server.window.log("Failed to download file from client." + "\n", Color.RED);

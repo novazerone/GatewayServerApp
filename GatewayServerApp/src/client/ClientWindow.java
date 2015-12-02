@@ -83,7 +83,7 @@ public class ClientWindow implements ActionListener{
                 
                 if (x == JFileChooser.APPROVE_OPTION) {
                 	selectedFile = fileChooser.getSelectedFile();
-                    log("SELECTED: " + selectedFile.getAbsolutePath() + "\n", Color.BLACK);
+                    log("SELECTED: " + selectedFile.getAbsolutePath() + " (size "+selectedFile.length()+")\n", Color.BLACK);
                     uploadFile.setEnabled(true);
                 } else {
                 	selectedFile = null;

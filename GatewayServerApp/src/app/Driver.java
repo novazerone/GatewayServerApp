@@ -39,5 +39,4 @@ public class Driver {
 	public static int getServerTransferBlockSize(){
 		return serverTransferBlockSize;
 	}
-	
 }
