@@ -40,7 +40,7 @@ public class ClientWindow implements ActionListener{
     private void initializeGUI(String _windowName){
     	frame = new JFrame(_windowName);
     	messagePane = new JTextPane();
-    	fileChooser = new JFileChooser();
+    	fileChooser = new JFileChooser(".");
 
     	browseFile = new JButton("Browse File");
     	browseFile.setEnabled(false);
