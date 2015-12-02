@@ -11,23 +11,25 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import javax.swing.JOptionPane;
+
 import app.ByteCache;
 import app.Driver;
 import app.LogWindow;
-import gatewayServer.Gateway;
+
 public class Server {
 
-	public static String ServerName = "2"; // CHANGE SERVER NAME HERE
-	public static int ListenerPort = 8083; // TEST PURPOSES.
+	public static String ServerName = ""; // CHANGE SERVER NAME HERE
+	public static int ListenerPort; // TEST PURPOSES.
 	
-    public static void main(String[] args) throws Exception {
-//    	ServerName = Gateway.getInstance().getServerName();
-//    	ListenerPort = Gateway.getInstance().getListenerPort();
-//    	System.out.println(ServerName+" "+ListenerPort);
-//    	Gateway.getInstance().createServer();
+	public static void main(String[] args) throws Exception {
+    	Server server = new Server();
+
+    	do {
+        	getNameAndPort();
+        } while(!server.open());
     	
-        Server server = new Server(ServerName);
-        server.open();
+        server.updateServerUI();
         
         Runtime.getRuntime().addShutdownHook(new Thread()
         {
@@ -40,9 +42,12 @@ public class Server {
         
         server.run();
     }
-
-    private String name;
     
+    private static void getNameAndPort() {
+    	ServerName = JOptionPane.showInputDialog("Server name");
+    	ListenerPort = Integer.parseInt(JOptionPane.showInputDialog("Port (from 8082)"));
+    }
+   
     private Socket socket;
     private BufferedReader in;
     private PrintWriter out;
@@ -57,11 +62,14 @@ public class Server {
 	private DuplicateListener duplicateListener;
 	private ServerSocket serverSocket;
     
-    public Server(String _name) {
-    	name = _name;
-    	window = new LogWindow("Server - " + name);
+    public Server() {
+    	window = new LogWindow("Server - " + ServerName);
     	window.log("Server initialized." + "\n", Color.BLACK);
-    	window.log("UUID: " + name + "\n", Color.BLACK);
+    	window.log("UUID: " + ServerName + "\n", Color.BLACK);
+    }
+    
+    public void updateServerUI() {
+    	window.getFrame().setTitle("Server - " + ServerName);
     }
     
     /*
@@ -105,8 +113,9 @@ public class Server {
 			duplicateListener = new DuplicateListener(serverSocket);
 			duplicateListener.start();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Port already in use.", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
 		} // TODO: change ports
         
         return true;
@@ -169,7 +178,7 @@ public class Server {
 
         if (line.startsWith("IDENTIFY")) {			// The gateway is asking for identification.
         	// Respond with the password
-            out.println(name + "," + Driver.getServerPassword() + "," + ListenerPort);	
+            out.println(ServerName + "," + Driver.getServerPassword() + "," + ListenerPort);	
             
         } else if(line.startsWith("CONNECTION_SUCCESS")){ 
         	window.log("Successfully connected to gateway!" + "\n", Color.BLACK);
