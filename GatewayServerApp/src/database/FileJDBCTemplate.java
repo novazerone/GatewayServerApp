@@ -40,7 +40,7 @@ public class FileJDBCTemplate implements FileDAO {
 
     @Override
     public int create(String file_name, Integer file_size, Integer status) {
-        String query = "insert into files (file_name, file_size, status) values (?, ?, ?)";
+        String query = "insert into files (file_name, file_size, status) values (?, ?, ?) ON DUPLICATE KEY UPDATE file_size = ?";
 
         connection = ConnectionFactory.getConnection();
         int last_inserted_id = 0;
@@ -49,6 +49,7 @@ public class FileJDBCTemplate implements FileDAO {
             preparedStatement.setString(1, file_name);
             preparedStatement.setInt(2, file_size);
             preparedStatement.setInt(3, status);
+            preparedStatement.setInt(4, file_size);
             preparedStatement.execute();
 
             ResultSet rs = preparedStatement.getGeneratedKeys();
