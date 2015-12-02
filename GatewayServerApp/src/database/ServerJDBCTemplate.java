@@ -3,6 +3,7 @@ package database;
 import database.daos.ServerDAO;
 import database.daos.ServerMapper;
 import database.models.Server;
+import database.models.Server_File;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -12,9 +13,13 @@ import java.util.List;
 /**
  * Created by user on 12/2/2015.
  */
-public class ServerJDBCTemplate implements ServerDAO{
+public class ServerJDBCTemplate implements ServerDAO {
 
     private PreparedStatement preparedStatement = null;
+    private PreparedStatement preparedStatement2 = null;
+    private PreparedStatement preparedStatement3 = null;
+    private PreparedStatement preparedStatement4 = null;
+    private PreparedStatement preparedStatement5 = null;
     private Connection connection;
 
     @Override
@@ -34,13 +39,13 @@ public class ServerJDBCTemplate implements ServerDAO{
 
             ResultSet rs = preparedStatement.getGeneratedKeys();
 
-            if(rs.next()){
+            if (rs.next()) {
                 last_inserted_id = rs.getInt(1);
             }
 
 
             SQLWarning warning = preparedStatement.getWarnings();
-            if(warning != null){
+            if (warning != null) {
                 throw new SQLException(warning.getMessage());
             }
 
@@ -74,21 +79,22 @@ public class ServerJDBCTemplate implements ServerDAO{
             preparedStatement = connection.prepareStatement(query);
             rs = preparedStatement.executeQuery();
             int i = 0;
-            while(rs.next()){
+            while (rs.next()) {
                 System.out.println(rs.toString());
                 ServerMapper serverMapper = new ServerMapper();
                 Server server = serverMapper.mapRow(rs, i);
+                i++;
             }
             SQLWarning warning = preparedStatement.getWarnings();
 
-            if(warning != null){
+            if (warning != null) {
                 throw new SQLException(warning.getMessage());
             }
 
 
         } catch (SQLException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             DbUtil.close(preparedStatement);
             DbUtil.close(connection);
         }
@@ -108,38 +114,37 @@ public class ServerJDBCTemplate implements ServerDAO{
         try {
             preparedStatement = connection.prepareStatement(query);
             rs = preparedStatement.executeQuery();
-            while(rs.next()){
-            	available_server = rs.getInt("server_available");
+            while (rs.next()) {
+                available_server = rs.getInt("server_available");
             }
             SQLWarning warning = preparedStatement.getWarnings();
 
-            if(warning != null){
+            if (warning != null) {
                 throw new SQLException(warning.getMessage());
             }
 
             String query2 = "SELECT * from servers ORDER BY total_file_size asc LIMIT " + available_server;
             System.out.println(query2);
-            preparedStatement = connection.prepareStatement(query2);
-            rs = preparedStatement.executeQuery();
+            preparedStatement2 = connection.prepareStatement(query2);
+            rs = preparedStatement2.executeQuery();
+
             int i = 0;
-            while(rs.next()){
-            	System.out.println(rs.toString());
+            while (rs.next()) {
+                System.out.println(rs.toString());
                 ServerMapper serverMapper = new ServerMapper();
                 Server server = serverMapper.mapRow(rs, i);
                 i++;
                 String query3 = "insert into server_file (file_id, server_id, status) values (?, ?, 0)";
-                preparedStatement = connection.prepareStatement(query3);
-                preparedStatement.setInt(1, file_id);
-                preparedStatement.setInt(2, server.getId());
-                preparedStatement.execute();
+                preparedStatement3 = connection.prepareStatement(query3);
+                preparedStatement3.setInt(1, file_id);
+                preparedStatement3.setInt(2, server.getId());
+                preparedStatement3.execute();
             }
-
-
 
 
         } catch (SQLException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             DbUtil.close(preparedStatement);
             DbUtil.close(connection);
         }
@@ -166,7 +171,7 @@ public class ServerJDBCTemplate implements ServerDAO{
 
             SQLWarning warning = preparedStatement.getWarnings();
 
-            if(warning != null){
+            if (warning != null) {
                 throw new SQLException(warning.getMessage());
             }
         } catch (SQLException e) {
@@ -186,10 +191,11 @@ public class ServerJDBCTemplate implements ServerDAO{
             preparedStatement.setBoolean(1, status);
             preparedStatement.setInt(2, file_id);
             preparedStatement.setInt(3, server_id);
+            preparedStatement.execute();
 
             SQLWarning warning = preparedStatement.getWarnings();
 
-            if(warning != null){
+            if (warning != null) {
                 throw new SQLException(warning.getMessage());
             }
         } catch (SQLException e) {
@@ -198,4 +204,120 @@ public class ServerJDBCTemplate implements ServerDAO{
 
 
     }
+
+    public List<Server_File> checkFile(Integer port) {
+
+        String query = "select floor(count(*) * 2/3) AS server_available from servers";
+        ResultSet rs;
+        Integer available_server = 0;
+        List<Server> servers = new ArrayList<Server>();
+        List<Server_File> server_files = new ArrayList<Server_File>();
+        Connection connection = ConnectionFactory.getConnection();
+
+        try {
+            preparedStatement = connection.prepareStatement(query);
+            rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                available_server = rs.getInt("server_available");
+            }
+            SQLWarning warning = preparedStatement.getWarnings();
+
+            if (warning != null) {
+                throw new SQLException(warning.getMessage());
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DbUtil.close(preparedStatement);
+            DbUtil.close(connection);
+        }
+
+        Connection connection2 = ConnectionFactory.getConnection();
+        String query2 = "SELECT servers.id, servers.name, servers.status AS server_status, server_file.file_id, " +
+                "server_file.status AS file_status FROM servers JOIN server_file ON servers.id = server_file.server_id " +
+                "WHERE servers.port = ?";
+
+        ResultSet rsFiles;
+        try {
+            preparedStatement2 = connection2.prepareStatement(query2);
+            preparedStatement2.setInt(1, port);
+            rsFiles = preparedStatement2.executeQuery();
+
+            while (rsFiles.next()) {
+                int file_id = rsFiles.getInt("file_id");
+
+                String query3 = "SELECT count(*) as server_available FROM server_file WHERE file_id = ? AND status = true";
+                preparedStatement3 = connection2.prepareStatement(query3);
+                preparedStatement3.setInt(1, file_id);
+                rs = preparedStatement3.executeQuery();
+                int server_with_file = 0;
+                int i = 0;
+                while (rs.next()) {
+                    server_with_file = rs.getInt("server_available");
+
+                    String where = "";
+                    if (available_server > server_with_file) {
+
+                        int neededServer = available_server - server_with_file;
+
+                        String query4 = "SELECT * FROM servers LEFT JOIN server_file ON server_file.server_id = servers.id" +
+                                " WHERE file_id = ? AND server_file.STATUS = 1";
+
+                        preparedStatement4 = connection2.prepareStatement(query4);
+                        preparedStatement4.setInt(1, file_id);
+                        ResultSet rsWithFile = preparedStatement4.executeQuery();
+                        while (rsWithFile.next()) {
+                            where = where + " id <> " + rsWithFile.getInt("server_id") + " AND";
+                            i++;
+                        }
+                        where = where.substring(0, where.length() - 3);
+
+                        String query5 = "SELECT * FROM servers WHERE "  + where + " AND status = 1";
+                        preparedStatement5 = connection2.prepareStatement(query5);
+                        ResultSet rsServers = preparedStatement5.executeQuery();
+
+                        int j = 0;
+                        while (rsServers.next()) {
+                            System.out.println(rs.toString());
+                            ServerMapper serverMapper = new ServerMapper();
+                            Server server = serverMapper.mapRow(rsServers, j);
+                            servers.add(server);
+                            j++;
+                        }
+                        Server_File server_file = new Server_File();
+                        server_file.setServers(servers);
+                        server_file.setFile_id(file_id);
+                        servers = new ArrayList<Server>();
+                        server_files.add(server_file);
+
+                    }
+                    
+                }
+
+            }
+
+            SQLWarning warning = preparedStatement2.getWarnings();
+
+            if (warning != null) {
+                throw new SQLException(warning.getMessage());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DbUtil.close(connection);
+            DbUtil.close(connection2);
+            DbUtil.close(preparedStatement);
+            DbUtil.close(preparedStatement2);
+            DbUtil.close(preparedStatement3);
+            DbUtil.close(preparedStatement4);
+            DbUtil.close(preparedStatement5);
+        }
+
+
+        return server_files;
+
+    }
+
+
 }

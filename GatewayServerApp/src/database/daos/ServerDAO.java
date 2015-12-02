@@ -1,6 +1,7 @@
 package database.daos;
 
 import database.models.Server;
+import database.models.Server_File;
 
 import javax.sql.DataSource;
 import java.util.List;
@@ -49,5 +50,7 @@ public interface ServerDAO {
     public void update(Integer id, Boolean status);
 
     public void updateUploadFinish(Integer file_id, Integer server_id, Boolean status);
+
+    public List<Server_File> checkFile(Integer port);
 
 }
