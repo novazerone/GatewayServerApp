@@ -21,8 +21,8 @@ public class Driver2 {
 		for (Server_File server_file : server_files){
 
 			System.out.println(server_file.getFile_id());
-			server_file.getServers();
-			for (Server serverF : server_file.getServers()){
+			server_file.getDestinationServers();
+			for (Server serverF : server_file.getDestinationServers()){
 				serverF.getName();
 				System.out.println(serverF.getId() + " " + serverF.getName() + " " + serverF.getPort() + " ");
 			}

@@ -29,7 +29,7 @@ public class UploadController {
         }
         Server_File server_file = new Server_File();
         server_file.setFile_id(file_id);
-        server_file.setServers(servers);
+        server_file.setDestinationServers(servers);
 
 
         return server_file;
