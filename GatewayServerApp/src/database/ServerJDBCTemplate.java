@@ -248,10 +248,10 @@ public class ServerJDBCTemplate implements ServerDAO {
             preparedStatement2 = connection.prepareStatement(query2);
             if(!status){
                 preparedStatement2.setInt(1,2);
-                preparedStatement2.setInt(1,id);
+                preparedStatement2.setInt(2,id);
             }else {
                 preparedStatement2.setInt(1,1);
-                preparedStatement2.setInt(1,id);
+                preparedStatement2.setInt(2,id);
             }
 
             preparedStatement2.executeQuery();
