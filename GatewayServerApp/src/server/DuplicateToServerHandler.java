@@ -1,4 +1,4 @@
-package gatewayServer;
+package server;
 
 import java.awt.Color;
 import java.io.BufferedInputStream;
@@ -15,39 +15,46 @@ import java.net.Socket;
 import app.ByteCache;
 import app.Driver;
 
-public class FileToServerHandler extends Thread {
+public class DuplicateToServerHandler {
 	
-	private Socket connection;
+	private Socket socket;
+	private  BufferedReader in;
 	private PrintWriter out;
 	
 	private ByteCache file;
 	
 	public String input = "";
 	
-	public FileToServerHandler(Socket _socket, PrintWriter _out, ByteCache _byteCache){
-		connection = _socket;
+	public DuplicateToServerHandler(Socket _socket, BufferedReader _in, PrintWriter _out, ByteCache _byteCache){
+		socket = _socket;
+		in = _in;
 		out = _out;
 		file = _byteCache;
+		Server.window.log("Initialized Handler", Color.BLACK);
+		if(_byteCache == null)
+			Server.window.log("Cache is null", Color.BLACK);
 	}
 	
-	@Override
-	public void run(){
+	public void run() throws IOException{
 		if(file == null)
     		return;
-		
+
     	// Headers.
 		out.println("REQUEST:UPLOAD," + file.getFileName() + "," + file.getCurrentSize());
-    	
+		out.flush();
+
         int byteOffset = 0;
+
     	while(true){
+    		input = in.readLine();
     		
     		if(input == null){
-    			Gateway.log("Failed to upload " + file.getFileName() + "\n", Color.RED);
-    			return;
+    			Server.window.log("Failed to upload " + file.getFileName() + "\n", Color.RED);
+    			return; 
     		}
     		
     		if(input.startsWith("REQUESTDENIED")){
-    			Gateway.log("Failed to upload " + file.getFileName() + ". Request denied. \n", Color.BLACK);
+    			Server.window.log("Failed to upload " + file.getFileName() + ". Request denied. \n", Color.BLACK);
     			return;
     		}
     		
@@ -55,16 +62,17 @@ public class FileToServerHandler extends Thread {
     		if(input.startsWith("PROCEEDTOUPLOAD:")){
     			byteOffset = Integer.parseInt(input.substring(16));
     			if(byteOffset != 0)
-    				Gateway.log("Resuming upload at " + byteOffset + "..." + "\n", Color.BLUE);
+    				Server.window.log("Resuming upload at " + byteOffset + "..." + "\n", Color.BLUE);
     			else
-    				Gateway.log("Beginning upload..." + "\n", Color.BLUE);
+    				Server.window.log("Beginning upload..." + "\n", Color.BLUE);
+    			
     			break;
     		}
     	}
     	
     	try{
 	    	out.flush();
-	        DataOutputStream bos = new DataOutputStream(connection.getOutputStream());
+	        DataOutputStream bos = new DataOutputStream(socket.getOutputStream());
 	        ByteArrayInputStream bais = new ByteArrayInputStream(file.getBytes());
 	        BufferedInputStream bis = new BufferedInputStream(bais);
 	        
@@ -81,20 +89,20 @@ public class FileToServerHandler extends Thread {
 	        
         	// Upload...
         	while(byteOffset < file.getTargetSize()){
-	        	n = bis.read(buffer);
+        		n = bis.read(buffer);
 	        	bos.write(buffer, 0, n);
 	        	byteOffset += n;
-	        	Gateway.log("Uploading... " + byteOffset + " out of " + file.getTargetSize() + "\n", Color.BLACK);
+	        	Server.window.log("Uploading... " + byteOffset + " out of " + file.getTargetSize() + "\n", Color.BLACK);
 	        };
 	        
-	        Gateway.log("Successfully uploaded file!" + "\n", Color.BLUE);
+	        Server.window.log("Successfully uploaded file!" + "\n", Color.BLUE);
     	} catch(Exception e){
-            Gateway.log("Error: " + e.getMessage() + "\n", Color.RED);
+    		Server.window.log("Error: " + e.getMessage() + "\n", Color.RED);
             e.printStackTrace();
     	}
         
     	// Release references.
-    	connection = null;
+    	socket = null;
     	file = null;
 	}
 }
