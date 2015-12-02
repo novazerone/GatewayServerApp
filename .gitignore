@@ -1,3 +1,9 @@
+bin/
+.idea/
+/GatewayServerApp/.project
+/GatewayServerApp/.classpath
+
+
 # Java bin
 *.class
 

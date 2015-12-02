@@ -47,6 +47,16 @@ public class ServerListener extends Thread{
 		return servers.get(id);
 	}
 	
+	public ServerHandler getServerHandler(String _name){
+		for(int x = 0; x < servers.size(); x++){
+			ServerHandler sh = servers.get(x);
+			if(sh.getServerName() == _name)
+				return sh;
+		}
+		
+		return null;
+	}
+	
 	public int getSize(){
 		return servers.size();
 	}

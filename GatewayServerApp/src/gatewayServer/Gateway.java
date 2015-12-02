@@ -3,11 +3,13 @@ package gatewayServer;
 import java.awt.Color;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.List;
 
 import app.ByteCache;
 import app.CacheManager;
 import app.Driver;
 import app.LogWindow;
+import database.ServerJDBCTemplate;
 
 public class Gateway extends Thread {
 	
@@ -77,9 +79,15 @@ public class Gateway extends Thread {
 		}
 
     	window.log("Successfully initialized Client Listener!" + "\n",  new Color(0 , 100, 0));
+		// Initially, all servers are down.
+		ServerJDBCTemplate server = new ServerJDBCTemplate();
+		server.downAllServers();
+		
 	}
 	
 	public void run(){
+		
+		
         serverListener.start();
         clientListener.start();
         
@@ -122,17 +130,16 @@ public class Gateway extends Thread {
 		return cacheManager;
 	}
 	
-	public void distribute(ByteCache _byteCache){
+	public void distribute(ByteCache _byteCache, List<database.models.Server> _servers){
 		Gateway.log("Sending file to server..." + "\n", Color.BLACK);
-		
-		// TODO: Randomize on who gets the file.
-		serverListener.getServerHandler(0).uploadFile(_byteCache);
+		Gateway.log(_servers.size()+"\n", Color.red);
+		serverListener.getServerHandler(_servers.get(0).getName()).uploadFile(_byteCache);
 	}
 	
 	public String getRemainingServers(){
 		// TODO: Query for remaining servers.
 		// Return CSV of ports.
-		return "8083,8084";
+		return "8084";
 	}
 	
 	public static void log(String _msg, Color _c){
