@@ -1,9 +1,7 @@
 package server;
 
 import java.awt.Color;
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -15,9 +13,6 @@ import java.net.Socket;
 import app.ByteCache;
 import app.Driver;
 import app.LogWindow;
-import gatewayServer.ClientListener;
-
-import java.util.UUID;
 public class Server {
 
 	public static String ServerName = "2"; // CHANGE SERVER NAME HERE

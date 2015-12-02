@@ -1,14 +1,18 @@
 package database;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.SQLWarning;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
 import database.daos.ServerDAO;
 import database.daos.ServerMapper;
 import database.models.Server;
 import database.models.Server_File;
-
-import javax.sql.DataSource;
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by user on 12/2/2015.

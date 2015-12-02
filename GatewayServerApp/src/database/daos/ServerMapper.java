@@ -1,10 +1,9 @@
 package database.daos;
 
-import database.models.File;
-import database.models.Server;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import database.models.Server;
 
 /**
  * Created by user on 12/2/2015.

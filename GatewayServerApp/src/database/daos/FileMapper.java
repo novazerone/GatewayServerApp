@@ -1,10 +1,9 @@
 package database.daos;
 
-import database.models.File;
-
-import javax.swing.tree.RowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import database.models.File;
 
 /**
  * Created by user on 11/30/2015.

@@ -1,10 +1,11 @@
 package database.daos;
 
-import database.models.Server;
-import database.models.Server_File;
+import java.util.List;
 
 import javax.sql.DataSource;
-import java.util.List;
+
+import database.models.Server;
+import database.models.Server_File;
 
 /**
  * Created by user on 11/30/2015.

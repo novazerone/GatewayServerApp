@@ -9,7 +9,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-import app.ByteCache;
 import app.Driver;
 
 public class DuplicateHandler extends Thread {
