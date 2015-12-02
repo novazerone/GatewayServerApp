@@ -65,10 +65,6 @@ public class Client {
     		return false;
     	}
     	
-    	window.log("Successfully connected to gateway!" + "\n",  new Color(0 , 100, 0));
-
-		// Initialize streams.
-    	window.log("Initializing streams..." + "\n", Color.BLACK);
         try {
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 	        out = new PrintWriter(socket.getOutputStream(), true);
@@ -79,8 +75,8 @@ public class Client {
     		
     		return false;
 		}
-        
-        window.log("Successfully initialized streams!" + "\n",  new Color(0 , 100, 0));
+
+    	window.log("Successfully connected to gateway!" + "\n",  new Color(0 , 100, 0));
         
         return true;
     }
@@ -99,6 +95,8 @@ public class Client {
 	    		
 	    		return;
 			}
+			
+	    	window.log("Closed connection" + "\n",  new Color(0 , 100, 0));
     	}
     }
     
@@ -151,9 +149,12 @@ public class Client {
     	// Connect to the server.
     	open();
     	
+    	// Headers.
     	out.println("MODE:UPLOAD");
     	out.println("FILENAME:" + _file.getName());
+    	out.println("FILESIZE:" + _file.length());
     	
+        int byteOffset = 0;
     	while(true){
     		String input = in.readLine();
     		
@@ -162,39 +163,49 @@ public class Client {
     			return;
     		}
     		
-    		if(input.equals("PROCEEDTOUPLOAD"))
+    		// The signal to proceed uploading.
+    		if(input.startsWith("PROCEEDTOUPLOAD:")){
+    			byteOffset = Integer.parseInt(input.substring(16));
+    			if(byteOffset != 0)
+    				window.log("Resuming upload at " + byteOffset + "..." + "\n", Color.BLUE);
+    			else
+    				window.log("Beginning upload..." + "\n", Color.BLUE);
     			break;
+    		}
     	}
     	
-    	// TODO:
-    	// Test file upload interruption and handle it.
-    	// Test large file uploads.
-    	// Source: http://stackoverflow.com/questions/10819516/sending-big-file-using-fileinputstream-objectoutputstream
-    	// Split bytes into chunks (check source)
-    	/*FileInputStream fis = new FileInputStream(_file);
-        byte[] fileByte = new byte[fis.available()];
-        
-        window.log("Bytes Read: " + fis.read(fileByte) + "\n", Color.BLACK);
-        window.log("Uploading..." + "\n", Color.BLACK);
-        
-        ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-        oos.writeObject(fileByte);
-        fis.close();
-        */
-    	
-    	out.flush();
-        BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
-        FileInputStream fis = new FileInputStream(_file);
-        BufferedInputStream bis = new BufferedInputStream(fis);
-        int n = -1;
-        byte[] buffer = new byte[4096];
-        while((n = bis.read(buffer)) > -1){
-        	bos.write(buffer, 0, n);
-        }
-        bis.close();
-        bos.close();
-        
-        window.log("Successfully uploaded file!" + "\n", Color.BLUE);
+    	try{
+	    	out.flush();
+	        BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
+	        FileInputStream fis = new FileInputStream(_file);
+	        BufferedInputStream bis = new BufferedInputStream(fis);
+	        
+	        int n = -1;
+	        byte[] buffer;
+	        
+	        if(bis.available() - byteOffset < Driver.getClientTransferBlockSize())
+	        	buffer = new byte[bis.available() - byteOffset];
+	        else
+	        	buffer = new byte[Driver.getClientTransferBlockSize()];
+	        
+	        // Resume from last point.
+	        bis.skip(byteOffset);
+	        
+        	// Upload...
+        	while((n = bis.read(buffer)) > -1){
+	        	bos.write(buffer, 0, n);
+	        	byteOffset += n;
+	        	window.log("Uploading... " + byteOffset + " out of " + _file.length() + "\n", Color.BLACK);
+	        };
+	        
+	        bis.close();
+	        bos.close();
+	        
+	        window.log("Successfully uploaded file!" + "\n", Color.BLUE);
+    	} catch(Exception e){
+            window.log("Error: " + e.getMessage() + "\n", Color.RED);
+            e.printStackTrace();
+    	}
         
         close();
     }

@@ -7,6 +7,9 @@ public class Driver {
 	
 	private final static String serverPassword = "ADVANCEOS";
 	
+	private final static int clientTransferBlockSize = 4096;
+	private final static int serverTransferBlockSize = 8192;
+	
 	/**
 	 * @return the host
 	 */
@@ -28,4 +31,13 @@ public class Driver {
 	public static String getServerPassword(){
 		return serverPassword;
 	}
+	
+	public static int getClientTransferBlockSize(){
+		return clientTransferBlockSize;
+	}
+	
+	public static int getServerTransferBlockSize(){
+		return serverTransferBlockSize;
+	}
+	
 }

@@ -3,7 +3,10 @@ package gatewayServer;
 import java.awt.Color;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.Random;
 
+import app.ByteCache;
+import app.CacheManager;
 import app.Driver;
 import app.LogWindow;
 
@@ -40,6 +43,8 @@ public class Gateway extends Thread {
     private ClientListener clientListener;
     
     private LogWindow window = new LogWindow("Gateway Server");
+    
+    private CacheManager cacheManager;
 	
 	public Gateway(){
 		initialize();
@@ -79,6 +84,8 @@ public class Gateway extends Thread {
         serverListener.start();
         clientListener.start();
         
+        cacheManager = new CacheManager(1000000000);	// 1 GB
+        
         try {
         	synchronized(serverListener){
         		serverListener.wait();
@@ -110,6 +117,23 @@ public class Gateway extends Thread {
 	
 	public ClientListener getClientListener(){
 		return clientListener;
+	}
+	
+	public CacheManager getCacheManager(){
+		return cacheManager;
+	}
+	
+	public void distribute(ByteCache _byteCache){
+		Gateway.log("Sending file to server..." + "\n", Color.BLACK);
+		
+		// TODO: Randomize on who gets the file.
+		serverListener.getServerHandler(0).uploadFile(_byteCache);
+	}
+	
+	public String getRemainingServers(){
+		// TODO: Query for remaining servers.
+		// Return CSV of ports.
+		return "8083";
 	}
 	
 	public static void log(String _msg, Color _c){

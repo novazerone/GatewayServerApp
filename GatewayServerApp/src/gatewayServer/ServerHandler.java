@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import app.ByteCache;
 import app.Driver;
 
 public class ServerHandler extends Thread {
@@ -14,6 +15,10 @@ public class ServerHandler extends Thread {
     private Socket connection;
     private BufferedReader in;
     private PrintWriter out;
+    
+    private FileToServerHandler ftsh;
+    
+    private int listenerPort = 0;	// The port in which this server will listen for duplications.
 
     public ServerHandler(Socket _socket) {
         connection = _socket;
@@ -30,9 +35,10 @@ public class ServerHandler extends Thread {
             out.println("IDENTIFY");
             while (true) {
                 String identification = in.readLine();
-                String[] parts = identification.split("[|]");
+                String[] parts = identification.split(",");
                 String serverName = parts[0];
                 String password = parts[1];
+                listenerPort = Integer.parseInt(parts[2]);
                 
                 if (!password.equals(Driver.getServerPassword()))
                 	continue; // TODO: Close connection on failure. Or something.
@@ -44,6 +50,7 @@ public class ServerHandler extends Thread {
                 
                 // Signal the server that the connection was established.
                 out.println("CONNECTION_SUCCESS");
+                out.flush();
                 break;
             }
             
@@ -51,12 +58,28 @@ public class ServerHandler extends Thread {
             	String message = in.readLine();
             	
             	if(message == null){
+            		if(ftsh != null)
+            			ftsh.input = null;
             		break;
             	}
             	
             	if(message.startsWith("MESSAGE")){
             		Gateway.log(message.substring(8) + "\n", Color.BLACK);
+            	} else if(message.startsWith("DUPLICATEFILE")){
+            		String fileName = message.substring(14);
+            		// TODO: Query stuff. If file is not 2/3, respond with another server's port 
+            		// so that this guy can establish a connection with it independently.
+            		if(Gateway.getInstance().getServerListener().getSize() < 2)
+            			out.println("DUPLICATERESPONSE:SUCCESS");
+            		else {
+            			String ports = Gateway.getInstance().getRemainingServers();
+            			// TODO: Respond with a CSV of server ports.
+            			out.println("DUPLICATERESPONSE:" + ports);
+            		}
             	}
+            	
+            	if(ftsh != null)
+            		ftsh.input = message;
             }
 
         } catch (IOException e) {
@@ -77,10 +100,24 @@ public class ServerHandler extends Thread {
         }
         
         Gateway.getInstance().getServerListener().removeServer(this);
-		Gateway.log(name + " closed connection." + "\n", Color.BLACK);
+		Gateway.log("Server " + name + " closed connection." + "\n", Color.BLACK);
     }
     
     public void setServerName(String _name){
     	name = _name;
+    }
+    
+    public Socket getSocket(){
+    	return connection;
+    }
+    
+    public int getDuplicationPort(){
+    	return listenerPort;
+    }
+    
+    public void uploadFile(ByteCache _byteCache){
+
+		ftsh = new FileToServerHandler(connection, out, _byteCache);
+		ftsh.start();
     }
 }

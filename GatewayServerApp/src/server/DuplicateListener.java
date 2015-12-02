@@ -1,4 +1,4 @@
-package gatewayServer;
+package server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -6,15 +6,15 @@ import java.net.SocketException;
 import java.util.Vector;
 
 /*
- * ServerListener
+ * DuplicateListener
  * - A thread that listens to sub-server connections.
  */
-public class ServerListener extends Thread{
+public class DuplicateListener extends Thread{
 	
 	private ServerSocket socket;
-	private Vector<ServerHandler> servers = new Vector<ServerHandler>();
+	private Vector<DuplicateHandler> servers = new Vector<DuplicateHandler>();
 	
-	public ServerListener (ServerSocket _socket){
+	public DuplicateListener (ServerSocket _socket){
 		socket = _socket;
 	}
 	
@@ -22,7 +22,7 @@ public class ServerListener extends Thread{
         try {
         	// Listen for server connections
             while (true) {
-        		ServerHandler server = new ServerHandler(socket.accept());
+            	DuplicateHandler server = new DuplicateHandler(socket.accept());
         		server.start();
 
         		addServer(server);
@@ -35,20 +35,16 @@ public class ServerListener extends Thread{
 		}
 	}
 	
-	public boolean addServer(ServerHandler _server){
+	public boolean addServer(DuplicateHandler _server){
 		return servers.add(_server);
 	}
 	
-	public boolean removeServer(ServerHandler _server){
+	public boolean removeServer(DuplicateHandler _server){
 		return servers.remove(_server);
 	}
 	
-	public ServerHandler getServerHandler(int id){
+	public DuplicateHandler getServerHandler(int id){
 		return servers.get(id);
-	}
-	
-	public int getSize(){
-		return servers.size();
 	}
 	
 	public void close(){
