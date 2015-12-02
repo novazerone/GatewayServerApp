@@ -26,7 +26,14 @@ public class DuplicateHandler extends Thread {
     
     public DuplicateHandler(Socket _socket) {
     	socket = _socket;
-    	Server.window.log("Connection established at port " + Server.ListenerPort, Color.BLUE);
+		try {
+			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			out = new PrintWriter(socket.getOutputStream(), true);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	Server.window.log("Connection established at port " + Server.ListenerPort + "\n", Color.BLUE);
     }
 
     @Override
@@ -36,7 +43,8 @@ public class DuplicateHandler extends Thread {
 	        while (true) {
 	        	if(isFinished)
 	        		break;
-	        	
+
+	        	Server.window.log("Reading input\n", Color.BLUE);
 	        	boolean readBytesSuccess = false;
 	        	boolean readTextSuccess = false;
 	            if(isDownloading)
@@ -57,8 +65,10 @@ public class DuplicateHandler extends Thread {
     }
     
     private boolean readInputText() throws IOException{
+       	Server.window.log("Reading line...\n", Color.BLACK);
     	String line = in.readLine();
 
+       	Server.window.log(line, Color.BLACK);
         // No message from the server.
         if(line == null){
     		//window.log("Lost connection to server." + "\n", Color.RED);
@@ -100,7 +110,8 @@ public class DuplicateHandler extends Thread {
 			int n;
 
 			// Download the chunks.
-			while((n = dis.read(buffer)) > 0){
+			while(byteOffset < Integer.parseInt(fileSize)){
+				n = dis.read(buffer);
 				fos.write(buffer, 0, n);
 				byteOffset += n;
 				

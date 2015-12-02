@@ -133,7 +133,7 @@ public class Gateway extends Thread {
 	public String getRemainingServers(){
 		// TODO: Query for remaining servers.
 		// Return CSV of ports.
-		return "8083";
+		return "8083,8084";
 	}
 	
 	public static void log(String _msg, Color _c){
