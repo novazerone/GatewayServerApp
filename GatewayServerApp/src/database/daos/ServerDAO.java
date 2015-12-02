@@ -19,7 +19,7 @@ public interface ServerDAO {
      * This is the method to be used to create
      * a record in the Student table.
      */
-    public void create(String name, Boolean status);
+    public int create(String name, Integer port);
     /**
      * This is the method to be used to list down
      * a record from the Student table corresponding
@@ -47,5 +47,7 @@ public interface ServerDAO {
      * a record into the Student table.
      */
     public void update(Integer id, Boolean status);
+
+    public void updateUploadFinish(Integer file_id, Integer server_id, Boolean status);
 
 }

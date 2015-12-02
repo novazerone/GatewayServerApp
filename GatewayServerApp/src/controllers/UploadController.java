@@ -3,6 +3,7 @@ package controllers;
 import database.FileJDBCTemplate;
 import database.ServerJDBCTemplate;
 import database.models.Server;
+import database.models.Server_File;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,21 +16,23 @@ public class UploadController {
     public UploadController() {
     }
 
-    public List<Server> uploadFile(String file_name, Integer file_size){
+    public Server_File uploadFile(String file_name, Integer file_size){
 
         FileJDBCTemplate fileDB = new FileJDBCTemplate();
         ServerJDBCTemplate serverDB = new ServerJDBCTemplate();
-        List<Server> server = new ArrayList<Server>();
+        List<Server> servers = new ArrayList<Server>();
 
         int file_id = fileDB.create(file_name, file_size, 0);
 
         if(file_id != 0){
-           server = serverDB.listAvailableServers(file_id);
+           servers = serverDB.listAvailableServers(file_id);
         }
+        Server_File server_file = new Server_File();
+        server_file.setFile_id(file_id);
+        server_file.setServers(servers);
 
 
-
-        return server;
+        return server_file;
     }
 
 }

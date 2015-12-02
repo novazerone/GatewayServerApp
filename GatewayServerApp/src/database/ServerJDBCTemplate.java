@@ -18,7 +18,41 @@ public class ServerJDBCTemplate implements ServerDAO{
     private Connection connection;
 
     @Override
-    public void create(String name, Boolean status) {
+    public int create(String server_name, Integer port) {
+
+        String query = "insert into servers (name, status, total_file_size, port) values (?, ?, ?, ?)";
+
+        connection = ConnectionFactory.getConnection();
+        int last_inserted_id = 0;
+        try {
+            preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            preparedStatement.setString(1, server_name);
+            preparedStatement.setBoolean(2, true);
+            preparedStatement.setInt(3, 0);
+            preparedStatement.setInt(4, port);
+            preparedStatement.execute();
+
+            ResultSet rs = preparedStatement.getGeneratedKeys();
+
+            if(rs.next()){
+                last_inserted_id = rs.getInt(1);
+            }
+
+
+            SQLWarning warning = preparedStatement.getWarnings();
+            if(warning != null){
+                throw new SQLException(warning.getMessage());
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DbUtil.close(preparedStatement);
+            DbUtil.close(connection);
+        }
+
+        return last_inserted_id;
+
 
     }
 
@@ -121,6 +155,47 @@ public class ServerJDBCTemplate implements ServerDAO{
 
     @Override
     public void update(Integer id, Boolean status) {
+
+        String query = "update servers set status = ? where id = ?";
+        Connection connection = ConnectionFactory.getConnection();
+
+        try {
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setBoolean(1, status);
+            preparedStatement.setInt(2, id);
+
+            SQLWarning warning = preparedStatement.getWarnings();
+
+            if(warning != null){
+                throw new SQLException(warning.getMessage());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    public void updateUploadFinish(Integer file_id, Integer server_id, Boolean status) {
+
+        String query = "update server_file set status = ? where file_id = ? AND server_id = ?";
+        Connection connection = ConnectionFactory.getConnection();
+
+        try {
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setBoolean(1, status);
+            preparedStatement.setInt(2, file_id);
+            preparedStatement.setInt(3, server_id);
+
+            SQLWarning warning = preparedStatement.getWarnings();
+
+            if(warning != null){
+                throw new SQLException(warning.getMessage());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
 
     }
 }

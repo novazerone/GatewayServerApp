@@ -1,30 +1,23 @@
 package database.models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by user on 11/30/2015.
  */
 public class Server_File {
 
-    private Integer id;
     private Integer file_id;
-    private Integer server_id;
+    private List<Server> servers = new ArrayList<Server>();
 
     /**
-     * Sets new server_id.
+     * Sets new servers.
      *
-     * @param server_id New value of server_id.
+     * @param servers New value of servers.
      */
-    public void setServer_id(Integer server_id) {
-        this.server_id = server_id;
-    }
-
-    /**
-     * Gets id.
-     *
-     * @return Value of id.
-     */
-    public Integer getId() {
-        return id;
+    public void setServers(List<Server> servers) {
+        this.servers = servers;
     }
 
     /**
@@ -37,29 +30,20 @@ public class Server_File {
     }
 
     /**
+     * Gets servers.
+     *
+     * @return Value of servers.
+     */
+    public List<Server> getServers() {
+        return servers;
+    }
+
+    /**
      * Gets file_id.
      *
      * @return Value of file_id.
      */
     public Integer getFile_id() {
         return file_id;
-    }
-
-    /**
-     * Sets new id.
-     *
-     * @param id New value of id.
-     */
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    /**
-     * Gets server_id.
-     *
-     * @return Value of server_id.
-     */
-    public Integer getServer_id() {
-        return server_id;
     }
 }
