@@ -1,8 +1,12 @@
 package gatewayServer;
 
+import database.ServerJDBCTemplate;
+import database.models.Server_File;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.SocketException;
+import java.util.List;
 import java.util.Vector;
 
 /*
@@ -40,6 +44,10 @@ public class ServerListener extends Thread{
 	}
 	
 	public boolean removeServer(ServerHandler _server){
+
+		ServerJDBCTemplate dbServer = new ServerJDBCTemplate();
+		List<Server_File> files = dbServer.checkFile(_server.getDuplicationPort());
+		
 		return servers.remove(_server);
 	}
 	
