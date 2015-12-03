@@ -18,11 +18,13 @@ public class FileToServerHandler extends Thread {
 	private ByteCache file;
 	
 	public String input = "";
+	int fileId;
 	
-	public FileToServerHandler(Socket _socket, PrintWriter _out, ByteCache _byteCache){
+	public FileToServerHandler(Socket _socket, PrintWriter _out, ByteCache _byteCache, int _fileId){
 		connection = _socket;
 		out = _out;
 		file = _byteCache;
+		fileId = _fileId;
 	}
 	
 	@Override
@@ -31,7 +33,7 @@ public class FileToServerHandler extends Thread {
     		return;
 		
     	// Headers.
-		out.println("REQUEST:UPLOAD," + file.getFileName() + "," + file.getCurrentSize());
+		out.println("REQUEST:UPLOAD," + file.getFileName() + "," + file.getCurrentSize() + "," + fileId);
     	
         int byteOffset = 0;
     	while(true){

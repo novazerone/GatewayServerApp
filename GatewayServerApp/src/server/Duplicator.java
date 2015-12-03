@@ -15,9 +15,12 @@ public class Duplicator extends Thread{
 	
 	private Socket socket;
 	
-	public Duplicator(ByteCache _cache, String[] _ports){
+	private int fileId;
+	
+	public Duplicator(ByteCache _cache, String[] _ports, int _fileId){
 		cache = _cache;
 		ports = _ports;
+		fileId = _fileId;
 	}
 	
 	@Override
@@ -30,7 +33,8 @@ public class Duplicator extends Thread{
 				
 				DuplicateToServerHandler dtsh = new DuplicateToServerHandler(
 						socket, 
-						cache);
+						cache,
+						fileId);
 				
 				dtsh.run(); // Do this sequentially.
 			} catch (NumberFormatException e) {

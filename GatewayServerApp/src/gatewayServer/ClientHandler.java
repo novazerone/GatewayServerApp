@@ -121,7 +121,7 @@ public class ClientHandler extends Thread {
 						database.models.Server_File dbFile = uploadController.uploadFile(fileName, (int)fileSize);
 						
 						// Distribute
-						Gateway.getInstance().distribute(cache, dbFile.getDestinationServers());
+						Gateway.getInstance().distribute(cache, dbFile.getDestinationServers(), dbFile.getFile_id());
 	            	} catch(Exception e){
 	            		Gateway.log("Error: " + e.getMessage() + "\n", Color.RED);
 	            		Gateway.log("Failed to download file from client." + "\n", Color.RED);
