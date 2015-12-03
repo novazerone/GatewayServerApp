@@ -132,7 +132,7 @@ public class ClientHandler extends Thread {
             } else{
             	// Supply the port to the server.
             	Gateway.log("Download requested. Returning port... \n", Color.BLUE);
-            	out.println("PROCEEDTOPORT:" + 8083); // TODO: Change port to available server.
+            	out.println("PROCEEDTOPORT:" + 9002); // TODO: Change port to available server.
             	out.flush();
             }
 

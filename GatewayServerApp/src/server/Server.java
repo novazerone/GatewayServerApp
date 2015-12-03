@@ -47,8 +47,8 @@ public class Server {
 
 	private static void getNameAndPort() {
 		ServerName = JOptionPane.showInputDialog("Server name");
-		ListenerPort = Integer.parseInt(JOptionPane.showInputDialog("Port (from 8082)"));
-		DownloadPort = Integer.parseInt(JOptionPane.showInputDialog("Port (from 8082)"));
+		ListenerPort = Integer.parseInt(JOptionPane.showInputDialog("ListenerPort (from 8000)"));
+		DownloadPort = Integer.parseInt(JOptionPane.showInputDialog("DownloadPort (from 9000)"));
 	}
 
 	private Socket socket;

@@ -33,6 +33,7 @@ public class LogWindow {
      */
     private void initializeGUI(String windowName){
     	frame = new JFrame(windowName);
+    	frame.setResizable(false);
     	messagePane = new JTextPane();
     	
         messagePane.setEditable(false);
