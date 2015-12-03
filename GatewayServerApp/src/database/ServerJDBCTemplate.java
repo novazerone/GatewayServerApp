@@ -181,6 +181,45 @@ public class ServerJDBCTemplate implements ServerDAO {
     }
 
     @Override
+    public List<Server> getServerWithFiles(Integer file_id) {
+        String query = "SELECT * FROM server_file JOIN servers WHERE file_id = ?";
+        ResultSet rs;
+        List<Server> servers = new ArrayList<Server>();
+
+        Connection connection = ConnectionFactory.getConnection();
+
+        try {
+
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1,file_id);
+            rs = preparedStatement.executeQuery();
+            int i = 0;
+            while (rs.next()) {
+                System.out.println(rs.toString());
+                ServerMapper serverMapper = new ServerMapper();
+                Server server = serverMapper.mapRow(rs, i);
+                i++;
+                servers.add(server);
+            }
+
+            SQLWarning warning = preparedStatement.getWarnings();
+
+            if (warning != null) {
+                throw new SQLException(warning.getMessage());
+            }
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DbUtil.close(preparedStatement);
+            DbUtil.close(connection);
+        }
+
+        return servers;
+    }
+
+    @Override
     public List<Server> listAvailableServers(Integer file_id) {
 
         String query = "select floor(count(*) * 2/3) AS server_available from servers";
@@ -213,6 +252,7 @@ public class ServerJDBCTemplate implements ServerDAO {
                 ServerMapper serverMapper = new ServerMapper();
                 Server server = serverMapper.mapRow(rs, i);
                 i++;
+                servers.add(server);
                 String query3 = "insert into server_file (file_id, server_id, status) values (?, ?, 0)";
                 preparedStatement3 = connection.prepareStatement(query3);
                 preparedStatement3.setInt(1, file_id);

@@ -17,6 +17,7 @@ import database.models.File;
 public class FileJDBCTemplate implements FileDAO {
 
     private PreparedStatement preparedStatement = null;
+    private PreparedStatement preparedStatement2 = null;
     private Connection connection;
 
 
@@ -40,7 +41,8 @@ public class FileJDBCTemplate implements FileDAO {
 
     @Override
     public int create(String file_name, Integer file_size, Integer status) {
-        String query = "insert into files (file_name, file_size, status) values (?, ?, ?) ON DUPLICATE KEY UPDATE file_size = ?";
+        String query = "insert into files (file_name, file_size, status) values (?, ?, ?) ON DUPLICATE KEY UPDATE file_size = ?,"
+        		+ "id = LAST_INSERT_ID(id)";
 
         connection = ConnectionFactory.getConnection();
         int last_inserted_id = 0;
@@ -50,13 +52,21 @@ public class FileJDBCTemplate implements FileDAO {
             preparedStatement.setInt(2, file_size);
             preparedStatement.setInt(3, status);
             preparedStatement.setInt(4, file_size);
-            preparedStatement.execute();
+            int i = preparedStatement.executeUpdate();
+            System.out.println(i);
+            String query2 = "SELECT LAST_INSERT_ID() AS n";
+            preparedStatement2 = connection.prepareStatement(query2);
+            ResultSet rs = preparedStatement2.executeQuery();
+            rs.next();
+            last_inserted_id = rs.getInt(1);
+            System.out.println(last_inserted_id);
 
-            ResultSet rs = preparedStatement.getGeneratedKeys();
 
-            if(rs.next()){
-                 last_inserted_id = rs.getInt(1);
-            }
+//            ResultSet rs = preparedStatement.getGeneratedKeys();
+//
+//            if(rs.next()){
+//                 last_inserted_id = rs.getInt(1);
+//            }
 
 
             SQLWarning warning = preparedStatement.getWarnings();
@@ -68,6 +78,7 @@ public class FileJDBCTemplate implements FileDAO {
             e.printStackTrace();
         } finally {
             DbUtil.close(preparedStatement);
+            DbUtil.close(preparedStatement2);
             DbUtil.close(connection);
         }
 
