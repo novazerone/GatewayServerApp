@@ -1,7 +1,6 @@
 /bin/
 .idea/
-/GatewayServerApp/.project
-/GatewayServerApp/.classpath
+*.eml
 
 
 # Java bin
