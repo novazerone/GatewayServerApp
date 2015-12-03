@@ -22,7 +22,8 @@ import gatewayServer.ClientListener;
 public class Server {
 
 	public static String ServerName = "";
-	public static int ListenerPort;
+	public static int ListenerPort;	// Duplicate port.
+	public static int DownloadPort;
 
 	public static void main(String[] args) throws Exception {
 		Server server = new Server();
@@ -47,6 +48,7 @@ public class Server {
 	private static void getNameAndPort() {
 		ServerName = JOptionPane.showInputDialog("Server name");
 		ListenerPort = Integer.parseInt(JOptionPane.showInputDialog("Port (from 8082)"));
+		DownloadPort = Integer.parseInt(JOptionPane.showInputDialog("Port (from 8082)"));
 	}
 
 	private Socket socket;
@@ -62,6 +64,9 @@ public class Server {
 
 	private DuplicateListener duplicateListener;
 	private ServerSocket serverSocket;
+	
+	private DownloadListener downloadListener;
+	private ServerSocket downloadServerSocket;
 
 	private ServerJDBCTemplate dbServer;
 	private int dbServerId;
@@ -127,6 +132,10 @@ public class Server {
 			serverSocket = new ServerSocket(ListenerPort);
 			duplicateListener = new DuplicateListener(serverSocket);
 			duplicateListener.start();
+			
+			downloadServerSocket = new ServerSocket(DownloadPort);
+			downloadListener = new DownloadListener(downloadServerSocket);
+			downloadListener.start();
 		} catch (IOException e) {
 			//e.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Port already in use.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -144,6 +153,7 @@ public class Server {
 			try {
 				dbServer.update(dbServerId, false);
 				duplicateListener.close();
+				downloadListener.close();
 				socket.close();
 			} catch (IOException e) {
 				window.log("Failed to close connection." + "\n", Color.RED);

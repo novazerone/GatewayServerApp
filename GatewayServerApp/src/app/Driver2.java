@@ -13,10 +13,11 @@ public class Driver2 {
 	public static void main(String[] args) {
 
 		UploadController uploadController = new UploadController();
-		//Server_File server_file = uploadController.uploadFile("file_new12334", 123);
-		//System.out.print(server.toArray().toString());
+		Server_File server_file = uploadController.uploadFile("cxvcx", 123);
+		System.out.print(server_file.getFile_id());
+		System.out.print(server_file.getDestinationServers().size());
 
-		ServerJDBCTemplate server = new ServerJDBCTemplate();
+		/*//ServerJDBCTemplate server = new ServerJDBCTemplate();
 		List<Server_File> server_files = server.checkFile(7);
 
 		for (Server_File server_file : server_files){
@@ -28,7 +29,7 @@ public class Driver2 {
 				System.out.println(serverF.getId() + " " + serverF.getName() + " " + serverF.getPort() + " ");
 			}
 
-		}
+		}*/
 	}
 	
 }

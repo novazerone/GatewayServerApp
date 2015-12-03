@@ -4,20 +4,26 @@ import java.awt.Color;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.UUID;
 
+import app.ByteCache;
 import app.Driver;
+import controllers.UploadController;
+import gatewayServer.Gateway;
 
 public class Client {
 
+	public static String ClientName = "Default";
     public static void main(String[] args) throws Exception {
-        Client client = new Client(UUID.randomUUID().toString());
+        Client client = new Client(ClientName);
         
         Runtime.getRuntime().addShutdownHook(new Thread()
         {
@@ -36,6 +42,7 @@ public class Client {
     private PrintWriter out;
 
     private ClientWindow window;
+    
     
     public Client(String _name) {
     	name = _name;
@@ -145,7 +152,10 @@ public class Client {
     		return;
     	
     	// Connect to the server.
-    	open();
+    	if(!open()){
+    		window.log("Failed to connect to gateway.\n", Color.red);
+    		return;
+    	}
     	
     	// Headers.
     	out.println("MODE:UPLOAD");
@@ -205,6 +215,117 @@ public class Client {
             e.printStackTrace();
     	}
         
+        close();
+    }
+    
+    public void downloadFile(String _fileName) throws IOException{
+    	if(_fileName == null)
+    		return;
+
+    	if(!open()){
+    		window.log("Failed to connect to gateway.\n", Color.red);
+    		return;
+    	}
+    	
+    	out.println("MODE:DOWNLOAD");
+    	out.println("FILENAME:" + _fileName);
+    	out.println("FILESIZE:111"); // Supply a tmp size.
+    	
+        int downloadPort;
+        int fileSize;
+        
+        int byteOffset = 0;
+    	while(true){
+    		String input = in.readLine();
+    		
+    		if(input == null){
+    			window.log("No response from server. Failed to download " + _fileName + "\n", Color.RED);
+    			return;
+    		}
+    		
+    		// The signal to proceed uploading.
+    		if(input.startsWith("PROCEEDTOPORT")){
+    			String response = input.substring(14);
+    			downloadPort = Integer.parseInt(response);
+    			
+    			if(byteOffset != 0)
+    				window.log("Resuming download at " + byteOffset + "..." + "\n", Color.BLUE);
+    			else
+    				window.log("Beginning download..." + "\n", Color.BLUE);
+    			break;
+    		}
+    	}
+    	
+    	Socket downloadConnection = null;
+    	try{
+			window.log("Connecting to server at port " + downloadPort + "\n", Color.BLUE);
+    		downloadConnection = new Socket(Driver.getHost(), downloadPort);
+
+			BufferedReader downloadIn = new BufferedReader(new InputStreamReader(downloadConnection.getInputStream()));
+			PrintWriter downloadOut = new PrintWriter(downloadConnection.getOutputStream(), true);
+			
+			window.log("Succesfully connected to port " + downloadPort + "\n", Color.BLUE);
+			
+			downloadOut.println("FILENAME:" + _fileName);
+			downloadOut.flush();
+
+			while(true){
+	    		String input = downloadIn.readLine();
+	    		
+	    		if(input == null){
+	    			window.log("Failed to download " + _fileName + "\n", Color.RED);
+	    			return;
+	    		}
+	    		
+	    		// The signal to proceed uploading.
+	    		if(input.startsWith("PROCEEDTODOWNLOAD:")){
+	    			String response = input.substring(18);
+	    			String[] parts = response.split(",");
+	    			byteOffset = Integer.parseInt(parts[0]);
+	    			fileSize = Integer.parseInt(parts[1]);
+	    			
+	    			if(byteOffset != 0)
+	    				window.log("Resuming download at " + byteOffset + "..." + "\n", Color.BLUE);
+	    			else
+	    				window.log("Beginning download..." + "\n", Color.BLUE);
+	    			break;
+	    		}
+	    	}
+
+    		while(true){
+            	try{
+        			DataInputStream dis = new DataInputStream(downloadConnection.getInputStream());
+        			FileOutputStream fos = new FileOutputStream(".\\_Clients\\"+ClientName+"\\" + _fileName, false);
+					byte[] buffer = new byte[Driver.getClientTransferBlockSize()];
+					int n;
+					
+					// Download the chunks.
+					while(byteOffset < fileSize){
+						n = dis.read(buffer);
+						fos.write(buffer, 0, n);
+						byteOffset += n;
+						
+						window.log("Downloading... " + byteOffset + " out of " + fileSize + "\n", Color.BLACK);
+					}
+					
+					fos.close();
+					
+					window.log("File succesfully saved." + "\n", Color.BLACK);
+					break;
+            	} catch(Exception e){
+            		window.log("Error: " + e.getMessage() + "\n", Color.RED);
+            		window.log("Failed to download file from server." + "\n", Color.RED);
+            		e.printStackTrace();
+            	}
+				break;
+            }
+    	} catch(Exception e){
+    		e.printStackTrace();
+    	} finally{
+    		if(downloadConnection != null)
+    			downloadConnection.close();
+    	}
+    	
         close();
     }
 }
