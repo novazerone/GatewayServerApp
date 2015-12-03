@@ -62,7 +62,6 @@ public class ClientHandler extends Thread {
             		break;
             }
             
-
         	CacheManager cm = Gateway.getInstance().getCacheManager();
         	int byteOffset = 0;
             if(mode.equals("UPLOAD")){
@@ -84,7 +83,7 @@ public class ClientHandler extends Thread {
             	}
             	
                 out.flush();
-				BufferedInputStream bis = new BufferedInputStream(connection.getInputStream());;
+				BufferedInputStream bis = new BufferedInputStream(connection.getInputStream());
 				
 	            while(true){
 	            	try{
@@ -130,8 +129,11 @@ public class ClientHandler extends Thread {
 	            	}
 					break;
 	            }
-            } else if (mode == "DOWNLOAD"){
-            	
+            } else{
+            	// Supply the port to the server.
+            	Gateway.log("Download requested. Returning port... \n", Color.BLUE);
+            	out.println("PROCEEDTOPORT:" + 8083); // TODO: Change port to available server.
+            	out.flush();
             }
 
         } catch (IOException e) {

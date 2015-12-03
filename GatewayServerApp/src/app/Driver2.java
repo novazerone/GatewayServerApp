@@ -18,8 +18,6 @@ public class Driver2 {
 		System.out.print(server_file.getDestinationServers().toArray().toString());
 
 		ServerJDBCTemplate server = new ServerJDBCTemplate();
-
-
 //
 //		List<Server_File> server_files = server.checkFile(7);
 //

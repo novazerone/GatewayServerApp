@@ -1,6 +1,5 @@
+/database/
+/server/
 /app/
 /client/
-/controllers/
-/database/
 /gatewayServer/
-/server/

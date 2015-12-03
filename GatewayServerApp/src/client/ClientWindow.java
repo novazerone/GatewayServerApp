@@ -10,6 +10,7 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.SimpleAttributeSet;
@@ -24,6 +25,8 @@ public class ClientWindow implements ActionListener{
     private JFileChooser fileChooser;
     private JButton browseFile;
     private JButton uploadFile;
+    private JButton downloadFile;
+    private JTextField textField = new JTextField(40);
     
     private File selectedFile;
     
@@ -50,11 +53,19 @@ public class ClientWindow implements ActionListener{
         uploadFile.setEnabled(false);
         uploadFile.addActionListener(this);
         
+        downloadFile = new JButton("Download");
+        downloadFile.setEnabled(false);
+        downloadFile.addActionListener(this);
+
+        textField.setEditable(false);
+        
         messagePane.setEditable(false);
         messagePane.setPreferredSize(new Dimension(500, 300));
 
         frame.getContentPane().add(browseFile, "North");
         frame.getContentPane().add(uploadFile, "South");
+        frame.getContentPane().add(downloadFile, "West");
+        frame.getContentPane().add(textField, "East");
         frame.getContentPane().add(new JScrollPane(messagePane), "Center");
         frame.pack();
         
@@ -67,6 +78,8 @@ public class ClientWindow implements ActionListener{
      */
     public void setEnable(boolean _v){
     	browseFile.setEnabled(_v);
+    	downloadFile.setEnabled(_v);
+        textField.setEditable(_v);
     	
     	if(selectedFile != null){
     		uploadFile.setEnabled(_v);
@@ -95,8 +108,11 @@ public class ClientWindow implements ActionListener{
             // Send to server/gateway.
             if (e.getSource() == uploadFile) {
                 client.sendFile(selectedFile);
+            } else if(e.getSource() == downloadFile){
+            	client.downloadFile(textField.getText());
             }
         } catch (Exception ex) {
+        	
         }
     }
 
