@@ -6,10 +6,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 import database.daos.FileDAO;
+import database.daos.FileMapper;
+import database.daos.ServerMapper;
 import database.models.File;
+import database.models.Server;
 
 /**
  * Created by user on 11/30/2015.
@@ -92,8 +96,41 @@ public class FileJDBCTemplate implements FileDAO {
     }
 
     @Override
-    public List<File> listFiles(Integer server_id) {
-        return null;
+    public List<File> listFiles() {
+    	String query = "SELECT * from files";
+        ResultSet rs;
+        List<File> files = new ArrayList<File>();
+
+        Connection connection = ConnectionFactory.getConnection();
+
+        try {
+
+            preparedStatement = connection.prepareStatement(query);
+            rs = preparedStatement.executeQuery();
+            int i = 0;
+            while (rs.next()) {
+                System.out.println(rs.toString());
+                FileMapper fileMapper = new FileMapper();
+                File file = fileMapper.mapRow(rs, i);
+                i++;
+                files.add(file);
+            }
+            
+            SQLWarning warning = preparedStatement.getWarnings();
+            	
+            if (warning != null) {
+                throw new SQLException(warning.getMessage());
+            }
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DbUtil.close(preparedStatement);
+            DbUtil.close(connection);
+        }
+
+        return files;
     }
 
     @Override

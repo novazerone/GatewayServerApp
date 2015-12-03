@@ -14,15 +14,20 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.UUID;
 
+import javax.swing.JOptionPane;
+
 import app.ByteCache;
 import app.Driver;
 import controllers.UploadController;
 import gatewayServer.Gateway;
+import server.Server;
 
 public class Client {
 
-	public static String ClientName = "Default";
-    public static void main(String[] args) throws Exception {
+	public static String ClientName = "";
+    
+	public static void main(String[] args) throws Exception {
+    	ClientName = JOptionPane.showInputDialog("Client name");
         Client client = new Client(ClientName);
         
         Runtime.getRuntime().addShutdownHook(new Thread()
@@ -295,7 +300,9 @@ public class Client {
     		while(true){
             	try{
         			DataInputStream dis = new DataInputStream(downloadConnection.getInputStream());
-        			FileOutputStream fos = new FileOutputStream(".\\_Clients\\"+ClientName+"\\" + _fileName, false);
+        			File directory = new File(".\\_Clients\\" + ClientName);
+                    directory.mkdir();
+            		FileOutputStream fos = new FileOutputStream(directory +"\\" + _fileName,false);
 					byte[] buffer = new byte[Driver.getClientTransferBlockSize()];
 					int n;
 					
