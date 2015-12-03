@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.List;
 
 import app.ByteCache;
 import app.Driver;
@@ -22,6 +23,8 @@ public class ServerHandler extends Thread {
     private int listenerPort = 0;	// The port in which this server will listen for duplications.
 	private ServerJDBCTemplate dbServer;
 	private int dbServerId;
+	
+	public List<database.models.Server> destinationServers;
 
     public ServerHandler(Socket _socket) {
         connection = _socket;
@@ -76,9 +79,14 @@ public class ServerHandler extends Thread {
             		if(Gateway.getInstance().getServerListener().getSize() < 2)
             			out.println("DUPLICATERESPONSE:SUCCESS");
             		else {
-            			String ports = Gateway.getInstance().getRemainingServers();
             			// TODO: Respond with a CSV of server ports.
-            			out.println("DUPLICATERESPONSE:" + ports);
+            			String portCSV = "";
+            			for(database.models.Server s : destinationServers){
+            				portCSV += s.getPort() + ",";
+            			}
+            			portCSV = portCSV.substring(0, portCSV.length()-1);
+            			Gateway.log("Target Ports: " + portCSV + "\n", Color.BLUE);
+            			out.println("DUPLICATERESPONSE:" + portCSV);
             		}
             	}
             	
@@ -124,9 +132,9 @@ public class ServerHandler extends Thread {
     	return listenerPort;
     }
     
-    public void uploadFile(ByteCache _byteCache){
-
-		ftsh = new FileToServerHandler(connection, out, _byteCache);
+    public void uploadFile(ByteCache _byteCache, List<database.models.Server> _servers, int fileId){
+    	destinationServers = _servers;
+		ftsh = new FileToServerHandler(connection, out, _byteCache, fileId);
 		ftsh.start();
     }
 }

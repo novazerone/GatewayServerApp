@@ -60,6 +60,7 @@ public class Server {
 	private boolean isDownloading = false;
 	private String fileName = "";
 	private String fileSize = "";
+	private int fileId;
 	private ByteCache fileCache;
 
 	private DuplicateListener duplicateListener;
@@ -76,6 +77,11 @@ public class Server {
 		window.log("Server initialized." + "\n", Color.BLACK);
 		window.log("UUID: " + ServerName + "\n", Color.BLACK);
 
+	}
+
+	public void updateServerUI() {
+		window.getFrame().setTitle("Server - " + ServerName);
+
 		dbServer = new ServerJDBCTemplate();
 		database.models.Server dbServerObj = dbServer.getServer(ServerName);
 		if(dbServerObj == null){
@@ -86,10 +92,6 @@ public class Server {
 			dbServerId = dbServerObj.getId();
 			dbServer.update(dbServerId, true);
 		}
-	}
-
-	public void updateServerUI() {
-		window.getFrame().setTitle("Server - " + ServerName);
 	}
 
 	/*
@@ -226,6 +228,7 @@ public class Server {
 			if(requestType.equals("UPLOAD")){
 				fileName = contentArray[1];
 				fileSize = contentArray[2];
+				fileId = Integer.parseInt(contentArray[3]);
 
 				window.log("Downloading file from gateway..." + "\n", Color.BLUE);
 				isDownloading = true;
@@ -242,7 +245,7 @@ public class Server {
 			} else{
 				window.log("Duplicating to ports " + response + "\n", Color.BLACK);
 				String[] ports = response.split(",");
-				Duplicator duplicator = new Duplicator(fileCache, ports);
+				Duplicator duplicator = new Duplicator(fileCache, ports, fileId);
 				duplicator.start();
 			}
 		}
@@ -285,6 +288,10 @@ public class Server {
 			fileCache.setIsFinal(true);
 
 			window.log("File succesfully saved." + "\n", Color.BLACK);
+			
+			window.log("Saving to database... FID: " + fileId + "\n", Color.BLACK);
+			ServerJDBCTemplate db = new ServerJDBCTemplate();
+			db.updateUploadFinish(fileId, db.getServer(ServerName).getId(), 1);
 
 			// Attempt to duplicate
 			window.log("Attempting to duplicate file...\n", Color.BLACK);

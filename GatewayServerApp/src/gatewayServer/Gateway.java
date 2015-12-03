@@ -130,10 +130,20 @@ public class Gateway extends Thread {
 		return cacheManager;
 	}
 	
-	public void distribute(ByteCache _byteCache, List<database.models.Server> _servers){
+	public void distribute(ByteCache _byteCache, List<database.models.Server> _servers, int fileId){
 		Gateway.log("Sending file to server..." + "\n", Color.BLACK);
-		Gateway.log(_servers.size()+"\n", Color.red);
-		serverListener.getServerHandler(_servers.get(0).getName()).uploadFile(_byteCache);
+		
+		if(_servers.size() == 0)
+			return;
+
+		Gateway.log("Retrieving handler...\n", Color.RED);
+		ServerHandler handler = serverListener.getServerHandler(_servers.get(0).getName());
+		if(handler == null){
+			Gateway.log("Handler not found for server '" + _servers.get(0).getName() + "'\n", Color.BLACK);
+			return;
+		}
+		_servers.remove(0);
+		handler.uploadFile(_byteCache, _servers, fileId);
 	}
 	
 	public String getRemainingServers(){

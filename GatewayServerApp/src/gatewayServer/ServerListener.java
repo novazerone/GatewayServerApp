@@ -50,7 +50,7 @@ public class ServerListener extends Thread{
 	public ServerHandler getServerHandler(String _name){
 		for(int x = 0; x < servers.size(); x++){
 			ServerHandler sh = servers.get(x);
-			if(sh.getServerName() == _name)
+			if(sh.getServerName().equals(_name))
 				return sh;
 		}
 		
