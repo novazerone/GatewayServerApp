@@ -42,6 +42,7 @@ public class ClientWindow implements ActionListener{
      */
     private void initializeGUI(String _windowName){
     	frame = new JFrame(_windowName);
+    	frame.setResizable(false);
     	messagePane = new JTextPane();
     	fileChooser = new JFileChooser(".");
 
