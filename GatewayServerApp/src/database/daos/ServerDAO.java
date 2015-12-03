@@ -34,6 +34,7 @@ public interface ServerDAO {
      */
     public List<Server> listServers();
 
+    public List<Server> getServerWithFiles(Integer file_id);
 
     public List<Server> listAvailableServers(Integer file_id);
 
