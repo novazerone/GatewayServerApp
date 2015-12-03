@@ -29,7 +29,7 @@ public interface FileDAO {
      * This is the method to be used to list down
      * all the records from the Student table.
      */
-    public List<File> listFiles(Integer server_id);
+    public List<File> listFiles();
     /**
      * This is the method to be used to delete
      * a record from the Student table corresponding

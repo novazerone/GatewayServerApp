@@ -5,17 +5,24 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.List;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JList;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
+import javax.swing.JSeparator;
 import javax.swing.JTextPane;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
+
+import database.FileJDBCTemplate;
 
 public class ClientWindow implements ActionListener{
 
@@ -26,15 +33,17 @@ public class ClientWindow implements ActionListener{
 	private JButton browseFile;
 	private JButton uploadFile;
 	private JButton downloadFile;
-	private JTextField textField;
 
 	private File selectedFile;
 
 	private Client client;
+	private JList<String> list;
 
 	public ClientWindow(Client _client, String _windowName){
 		client = _client;
 		initializeGUI(_windowName);
+		fileChooser = new JFileChooser(".");
+		getFileList();
 	}
 
 	/*
@@ -44,46 +53,52 @@ public class ClientWindow implements ActionListener{
 		fileChooser = new JFileChooser(".");
 
 		frame = new JFrame(_windowName);
-		frame.setSize(520, 405);
+		frame.setSize(706, 375);
 		frame.getContentPane().setLayout(null);
 
 		browseFile = new JButton("Browse File");
-		browseFile.setBounds(10, 302, 100, 25);
+		browseFile.setBounds(10, 306, 100, 25);
 		browseFile.setEnabled(false);
 		browseFile.addActionListener(this);
 
 		uploadFile = new JButton("Upload");
-		uploadFile.setBounds(394, 302, 100, 25);
+		uploadFile.setBounds(284, 306, 100, 25);
 		uploadFile.setEnabled(false);
 		uploadFile.addActionListener(this);
 
 		downloadFile = new JButton("Download");
-		downloadFile.setBounds(394, 338, 100, 25);
+		downloadFile.setBounds(405, 306, 275, 25);
 		downloadFile.setEnabled(false);
 		downloadFile.addActionListener(this);
-
-		textField = new JTextField(40);
-		textField.setLocation(10, 338);
-		textField.setSize(374, 25);
-		textField.setEditable(false);
 
 		messagePane = new JTextPane();
 		messagePane.setBounds(0, 0, 500, 300);
 		messagePane.setEditable(false);
 		messagePane.setPreferredSize(new Dimension(500, 300));
 		
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(0, 0, 504, 302);
-		scrollPane.setViewportView(messagePane);
+		JScrollPane scrollPane1 = new JScrollPane();
+		scrollPane1.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPane1.setBounds(10, 11, 374, 291);
+		scrollPane1.setViewportView(messagePane);
+		
+		JSeparator separator = new JSeparator();
+		separator.setOrientation(SwingConstants.VERTICAL);
+		separator.setBounds(394, 11, 2, 320);
+		
+		list = new JList<String>();
+		list.setBounds(405, 11, 275, 284);
+		
+		JScrollPane scrollPane2 = new JScrollPane();
+		scrollPane2.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPane2.setBounds(405, 11, 275, 291);
+		scrollPane2.setViewportView(list);
 
 		frame.getContentPane().add(browseFile);
 		frame.getContentPane().add(uploadFile);
 		frame.getContentPane().add(downloadFile);
-		frame.getContentPane().add(textField);
-		frame.getContentPane().add(scrollPane);
-				
-		//frame.pack();
-
+		frame.getContentPane().add(scrollPane1);
+		frame.getContentPane().add(scrollPane2);
+		frame.getContentPane().add(separator);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 	}
@@ -94,7 +109,7 @@ public class ClientWindow implements ActionListener{
 	public void setEnable(boolean _v){
 		browseFile.setEnabled(_v);
 		downloadFile.setEnabled(_v);
-		textField.setEditable(_v);
+		list.setEnabled(_v);
 
 		if(selectedFile != null){
 			uploadFile.setEnabled(_v);
@@ -124,7 +139,7 @@ public class ClientWindow implements ActionListener{
 			if (e.getSource() == uploadFile) {
 				client.sendFile(selectedFile);
 			} else if(e.getSource() == downloadFile){
-				client.downloadFile(textField.getText());
+				client.downloadFile(list.getSelectedValue().toString());
 			}
 		} catch (Exception ex) {
 
@@ -155,6 +170,16 @@ public class ClientWindow implements ActionListener{
 		} catch(Exception e){
 			System.out.println(e.getMessage());
 		}
+	}
+	
+	private void getFileList() {
+		FileJDBCTemplate db = new FileJDBCTemplate();
+		List<database.models.File> fileList = db.listFiles();
+		DefaultListModel<String> model = new DefaultListModel<String>();
+		for(database.models.File f : fileList) {
+			model.addElement(f.getFile_name());
+		}
+		list.setModel(model);
 	}
 
 	public JFrame getFrame(){
