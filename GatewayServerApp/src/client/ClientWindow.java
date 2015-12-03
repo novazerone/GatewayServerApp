@@ -38,12 +38,13 @@ public class ClientWindow implements ActionListener{
 
 	private Client client;
 	private JList<String> list;
+	private JButton refresh;
 
 	public ClientWindow(Client _client, String _windowName){
 		client = _client;
 		initializeGUI(_windowName);
 		fileChooser = new JFileChooser(".");
-		getFileList();
+		refreshFileList();
 	}
 
 	/*
@@ -65,9 +66,14 @@ public class ClientWindow implements ActionListener{
 		uploadFile.setBounds(284, 306, 100, 25);
 		uploadFile.setEnabled(false);
 		uploadFile.addActionListener(this);
+		
+		refresh = new JButton("Refresh");;
+		refresh.setEnabled(false);
+		refresh.setBounds(404, 306, 100, 25);
+		refresh.addActionListener(this);
 
 		downloadFile = new JButton("Download");
-		downloadFile.setBounds(405, 306, 275, 25);
+		downloadFile.setBounds(580, 306, 100, 25);
 		downloadFile.setEnabled(false);
 		downloadFile.addActionListener(this);
 
@@ -96,9 +102,11 @@ public class ClientWindow implements ActionListener{
 		frame.getContentPane().add(browseFile);
 		frame.getContentPane().add(uploadFile);
 		frame.getContentPane().add(downloadFile);
+		frame.getContentPane().add(refresh);
 		frame.getContentPane().add(scrollPane1);
 		frame.getContentPane().add(scrollPane2);
-		frame.getContentPane().add(separator);
+		frame.getContentPane().add(separator);		
+		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 	}
@@ -109,6 +117,7 @@ public class ClientWindow implements ActionListener{
 	public void setEnable(boolean _v){
 		browseFile.setEnabled(_v);
 		downloadFile.setEnabled(_v);
+		refresh.setEnabled(_v);
 		list.setEnabled(_v);
 
 		if(selectedFile != null){
@@ -133,6 +142,8 @@ public class ClientWindow implements ActionListener{
 					log("No file selected." + "\n", Color.RED);
 					uploadFile.setEnabled(false);
 				}
+			} else if (e.getSource() == refresh) {
+				refreshFileList();
 			}
 
 			// Send to server/gateway.
@@ -172,7 +183,7 @@ public class ClientWindow implements ActionListener{
 		}
 	}
 	
-	private void getFileList() {
+	private void refreshFileList() {
 		FileJDBCTemplate db = new FileJDBCTemplate();
 		List<database.models.File> fileList = db.listFiles();
 		DefaultListModel<String> model = new DefaultListModel<String>();
