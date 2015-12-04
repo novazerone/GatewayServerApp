@@ -82,7 +82,7 @@ public class ServerHandler extends Thread {
             			// TODO: Respond with a CSV of server ports.
             			String portCSV = "";
             			for(database.models.Server s : destinationServers){
-            				portCSV += s.getPort() + ",";
+            				portCSV += s.getUploadPort() + ",";
             			}
             			portCSV = portCSV.substring(0, portCSV.length()-1);
             			Gateway.log("Target Ports: " + portCSV + "\n", Color.BLUE);

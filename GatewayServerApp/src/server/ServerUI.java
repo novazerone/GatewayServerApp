@@ -23,6 +23,7 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 
 import database.FileJDBCTemplate;
+import database.ServerJDBCTemplate;
 import javafx.beans.binding.When;
 
 import javax.swing.JPanel;
@@ -36,19 +37,20 @@ public class ServerUI {
 
 	// GUI
 	private JFrame frame;
-	
+
 	private JPanel pnlMain;
 	private JTextPane messagePane;
 	private JList<String> listFile;
 	private JButton btnRefresh;
-	
+
 	private JPanel pnlStatus;
 	private JLabel lblStatus;	
 	private JProgressBar progressBar;
+	
+	private String serverName;
 
 	public ServerUI(String _windowName){
 		initializeGUI(_windowName);
-		refreshFileList();
 	}
 
 	/**
@@ -142,19 +144,24 @@ public class ServerUI {
 		return frame;
 	}
 
+	public void setServerName(String serverName) {
+		this.serverName = serverName;
+		refreshFileList();
+	}
+	
 	/**
 	 * Refreshes the list of files the server contains.
 	 */
 	private void refreshFileList() {
-		//TODO: Given <ServerName>, get all files that it has.
-
-		//		FileJDBCTemplate db = new FileJDBCTemplate();
-		//		List<database.models.File> fileList = db.listFiles();
-		//		DefaultListModel<String> model = new DefaultListModel<String>();
-		//		for(database.models.File f : fileList) {
-		//			model.addElement(f.getFile_name());
-		//		}
-		//		list.setModel(model);
+		FileJDBCTemplate dbFile= new FileJDBCTemplate();
+		ServerJDBCTemplate dbServer = new ServerJDBCTemplate();
+		
+		List<database.models.File> fileList = dbFile.listServerFiles(dbServer.getServer(serverName).getId());
+		DefaultListModel<String> model = new DefaultListModel<String>();
+		for(database.models.File f : fileList) {
+			model.addElement(f.getFile_name());
+		}
+		listFile.setModel(model);
 	}
 
 	/**

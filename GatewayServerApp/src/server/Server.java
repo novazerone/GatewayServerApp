@@ -45,8 +45,8 @@ public class Server {
 
 	private static void getNameAndPort() {
 		ServerName = JOptionPane.showInputDialog("Server name");
-		ListenerPort = Integer.parseInt(JOptionPane.showInputDialog("ListenerPort (from 8000)"));
-		DownloadPort = Integer.parseInt(JOptionPane.showInputDialog("DownloadPort (from 9000)"));
+		ListenerPort = Integer.parseInt(JOptionPane.showInputDialog("ListenerPort (from 8001)"));
+		DownloadPort = Integer.parseInt(JOptionPane.showInputDialog("DownloadPort (from 9001)"));
 	}
 
 	private Socket socket;
@@ -77,19 +77,19 @@ public class Server {
 
 	}
 
-	public void updateServerUI() {
-		window.getFrame().setTitle("Server - " + ServerName + " // Listening @Port:" + ListenerPort + " // Downloading @Port:" + DownloadPort);
-
+	public void updateServerUI() {	
 		dbServer = new ServerJDBCTemplate();
 		database.models.Server dbServerObj = dbServer.getServer(ServerName);
 		if(dbServerObj == null){
-			dbServerId = dbServer.create(ServerName, ListenerPort);
+			dbServerId = dbServer.create(ServerName, ListenerPort, DownloadPort);
 			dbServer.update(dbServerId, true);
 			window.log("Server is new. Automatically registered in database.\n", Color.BLACK);
 		} else{
 			dbServerId = dbServerObj.getId();
 			dbServer.update(dbServerId, true);
 		}
+		window.getFrame().setTitle("Server - " + ServerName + " // Listening @Port:" + ListenerPort + " // Downloading @Port:" + DownloadPort);
+		window.setServerName(ServerName);
 	}
 
 	/*
