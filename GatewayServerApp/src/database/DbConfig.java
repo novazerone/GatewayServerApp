@@ -13,8 +13,8 @@ public class DbConfig {
 	 * Fetches the values from the DbConectionFactory.ini file.
 	 * If DbConectionFactory.ini does not exist, create the file in the /resources/ folder with the following:
 	 * 		URL = jdbc:mysql://localhost:3306/gateway_server
-	 * 		USER = root
-	 * 		PASSWORD = root
+	 * 		USER = <your db username>
+	 * 		PASSWORD = <your db password>
 	 * 		DRIVER_CLASS = com.mysql.jdbc.Driver
 	 */
 	public static void initialize(){
