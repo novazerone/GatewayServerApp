@@ -73,8 +73,6 @@ public class Server {
 	public Server() {
 		window = new ServerUI("Server - " + ServerName);
 		window.log("Server initialized." + "\n", Color.BLACK);
-		window.log("UUID: " + ServerName + "\n", Color.BLACK);
-
 	}
 
 	public void updateServerUI() {	
@@ -89,6 +87,7 @@ public class Server {
 			dbServer.update(dbServerId, true);
 		}
 		window.getFrame().setTitle("Server - " + ServerName + " // Listening @Port:" + ListenerPort + " // Downloading @Port:" + DownloadPort);
+		window.log("UUID: " + ServerName + "\n", Color.BLACK);
 		window.setServerName(ServerName);
 	}
 
