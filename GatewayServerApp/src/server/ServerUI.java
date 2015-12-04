@@ -154,7 +154,9 @@ public class ServerUI {
 
 		List<database.models.File> fileList = dbFile.listServerFiles(dbServer.getServer(serverName).getId());
 		DefaultListModel<String> model = new DefaultListModel<String>();
+		System.out.println("Content:");
 		for(database.models.File f : fileList) {
+			System.out.println(f.getFile_name());
 			model.addElement(f.getFile_name());
 		}
 		listFile.setModel(model);

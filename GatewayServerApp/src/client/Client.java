@@ -16,6 +16,7 @@ import java.net.Socket;
 import javax.swing.JOptionPane;
 
 import app.Driver;
+import database.FileJDBCTemplate;
 
 public class Client {
 
@@ -111,33 +112,28 @@ public class Client {
 		// Process all messages from the gateway, according to the protocol.
 		try{
 			while (true) {
-				String line = in.readLine();
+				String line = in.readLine();				
 
-				// No message from the server.
-				if(line == null){
-					window.log("Lost connection to server." + "\n", Color.RED);
-					close();
-					break;
-				}
-
-				if (line.startsWith("IDENTIFY")) {			// The server is asking for identification.
+				if (line.startsWith("IDENTIFY")) { // The server is asking for identification.
 					// Respond with the UUID.
 					out.println(ClientName);	
-
 				} else if(line.startsWith("CONNECTION_SUCCESS")){ 
 					window.log("Successfully connected to gateway!" + "\n", Color.BLACK);
 				} else if (line.startsWith("MESSAGE")) {	// The server sent a message.
 					window.log(line.substring(8) + "\n", Color.BLACK);
-
 				} else if (line.startsWith("ERROR")) {		// The server sent an error message.
 					window.log(line.substring(6) + "\n", Color.RED);
 				} else if (line.startsWith("CLOSE")){
 					window.log("Gateway is closing. Disconnecting..." + "\n", Color.RED);
 					close();
+				} else if(line.isEmpty() && socket == null){ // No message from the server.
+					window.log("Lost connection to server." + "\n", Color.RED);
+					close();
+					break;
 				}
 			}
 		} catch(Exception e){
-			window.log("Lost connection to server." + "\n", Color.RED);
+			window.log("Hi Lost connection to server." + "\n", Color.RED);
 			close();
 		}
 	}
@@ -217,6 +213,8 @@ public class Client {
 	}
 
 	public void downloadFile(String _fileName) throws IOException{
+		FileJDBCTemplate dbFile = new FileJDBCTemplate();
+		
 		if(_fileName == null)
 			return;
 
@@ -225,9 +223,10 @@ public class Client {
 			return;
 		}
 
+		database.models.File f = dbFile.getFile(_fileName);
 		out.println("MODE:DOWNLOAD");
-		out.println("FILENAME:" + _fileName);
-		out.println("FILESIZE:111"); // Supply a tmp size.
+		out.println("FILENAME:" + f.getFile_name());
+		out.println("FILESIZE:" + f.getFile_size());
 
 		int downloadPort;
 		int fileSize;
@@ -237,11 +236,11 @@ public class Client {
 			String input = in.readLine();
 
 			if(input == null){
-				window.log("No response from server. Failed to download " + _fileName + "\n", Color.RED);
+				window.log("No response from server. Failed to download " + f.getFile_name() + "\n", Color.RED);
 				return;
 			}
 
-			// The signal to proceed uploading.
+			// The signal to proceed downloading.
 			if(input.startsWith("PROCEEDTOPORT")){
 				String response = input.substring(14);
 				downloadPort = Integer.parseInt(response);
@@ -264,18 +263,18 @@ public class Client {
 
 			window.log("Succesfully connected to port " + downloadPort + "\n", Color.BLUE);
 
-			downloadOut.println("FILENAME:" + _fileName);
+			downloadOut.println("FILENAME:" + f.getFile_name());
 			downloadOut.flush();
 
 			while(true){
 				String input = downloadIn.readLine();
 
 				if(input == null){
-					window.log("Failed to download " + _fileName + "\n", Color.RED);
+					window.log("Failed to download " + f.getFile_name() + "\n", Color.RED);
 					return;
 				}
 
-				// The signal to proceed uploading.
+				// The signal to proceed downloading.
 				if(input.startsWith("PROCEEDTODOWNLOAD:")){
 					String response = input.substring(18);
 					String[] parts = response.split(",");
@@ -295,7 +294,7 @@ public class Client {
 					DataInputStream dis = new DataInputStream(downloadConnection.getInputStream());
 					File directory = new File(".\\_Clients\\" + ClientName);
 					directory.mkdir();
-					FileOutputStream fos = new FileOutputStream(directory +"\\" + _fileName,false);
+					FileOutputStream fos = new FileOutputStream(directory +"\\" + f.getFile_name(),false);
 					byte[] buffer = new byte[Driver.getClientTransferBlockSize()];
 					int n;
 

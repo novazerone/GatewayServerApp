@@ -9,12 +9,18 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 import app.ByteCache;
 import app.CacheManager;
 import app.Driver;
 import controllers.UploadController;
+import database.FileJDBCTemplate;
+import database.ServerJDBCTemplate;
+import database.models.File;
+import database.models.Server;
 
 public class ClientHandler extends Thread {
 	private String name;
@@ -132,7 +138,20 @@ public class ClientHandler extends Thread {
 			} else{
 				// Supply the port to the server.
 				Gateway.log("Download requested. Returning port... \n", Color.BLUE);
-				out.println("PROCEEDTOPORT:" + 9002); // TODO: Change port to available server.
+				FileJDBCTemplate dbFile = new FileJDBCTemplate();
+				File f = dbFile.getFile(fileName);
+								
+				ServerJDBCTemplate dbServer = new ServerJDBCTemplate();
+				List<Server> servers = dbServer.getServerWithFiles(f.getId());
+				System.out.println("# of SERVERS with FID:"+f.getId()+" >> "+servers.size());
+				for (Server s : servers) {
+					System.out.println(" >> "+s.getDownloadPort());
+				}
+				Random r = new Random();
+				int index = r.nextInt(servers.size());
+				int randomDownloadPort = servers.get(index).getDownloadPort();
+				System.out.println("DL PORT: "+randomDownloadPort);
+				out.println("PROCEEDTOPORT:" + randomDownloadPort); // TODO: Change port to available server.
 				out.flush();
 			}
 
