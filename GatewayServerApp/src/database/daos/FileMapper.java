@@ -14,7 +14,7 @@ public class FileMapper{
         File file = new File();
         file.setId(rs.getInt("id"));
         file.setFile_name(rs.getString("file_name"));
-        file.setFile_size(rs.getString("file_size"));
+        file.setFile_size(rs.getInt("file_size"));
         file.setStatus(rs.getInt("status"));
 
         return file;

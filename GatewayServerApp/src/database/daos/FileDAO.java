@@ -24,12 +24,16 @@ public interface FileDAO {
      * a record from the Student table corresponding
      * to a passed student id.
      */
-    public File getFile(Integer id);
+    public File getFile(String file_name);
     /**
      * This is the method to be used to list down
      * all the records from the Student table.
      */
     public List<File> listFiles();
+
+
+    public List<File> listServerFiles(Integer server_id);
+
     /**
      * This is the method to be used to delete
      * a record from the Student table corresponding
