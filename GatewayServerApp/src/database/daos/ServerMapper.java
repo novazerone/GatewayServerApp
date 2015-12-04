@@ -10,17 +10,17 @@ import database.models.Server;
  */
 public class ServerMapper {
 
-    public Server mapRow(ResultSet rs, Integer rowNum) throws SQLException {
-        Server server = new Server();
-        server.setId(rs.getInt("id"));
-        server.setName(rs.getString("name"));
-        server.setTotal_fize_size(rs.getInt("total_file_size"));
-        server.setStatus(rs.getBoolean("status"));
-        server.setUploadPort(rs.getInt("port"));
-        server.setDownloadPort(rs.getInt("download_port"));
+	public Server mapRow(ResultSet rs, Integer rowNum) throws SQLException {
+		Server server = new Server();
+		server.setId(rs.getInt("id"));
+		server.setName(rs.getString("name"));
+		server.setTotal_fize_size(rs.getInt("total_file_size"));
+		server.setStatus(rs.getBoolean("status"));
+		server.setUploadPort(rs.getInt("port"));
+		server.setDownloadPort(rs.getInt("download_port"));
 
-        return server;
-    }
+		return server;
+	}
 
 
 }

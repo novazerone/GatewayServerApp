@@ -5,10 +5,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
@@ -24,10 +22,10 @@ public class GatewayUI {
 
 	// GUI
 	private JFrame frame;
-	
+
 	private JPanel pnlMain;
 	private JTextPane messagePane;
-	
+
 	private JPanel pnlStatus;
 	private JLabel lblStatus;	
 	private JProgressBar progressBar;
@@ -35,7 +33,7 @@ public class GatewayUI {
 	public GatewayUI(String windowName){
 		initializeGUI(windowName);
 	}
-	
+
 	/**
 	 * Initialize GUI.
 	 */
@@ -58,7 +56,7 @@ public class GatewayUI {
 		scrollMsg.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollMsg.setViewportView(messagePane);
 		pnlMain.add(scrollMsg);
-		
+
 		pnlStatus = new JPanel();
 		pnlStatus.setPreferredSize(new Dimension(10, 20));
 		pnlStatus.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));

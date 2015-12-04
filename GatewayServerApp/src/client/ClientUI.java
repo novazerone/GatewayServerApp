@@ -82,7 +82,7 @@ public class ClientUI {
 		scrollMsg.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollMsg.setViewportView(messagePane);
 		pnlMain.add(scrollMsg);
-		
+
 		btnBrowse = new JButton("Browse File");
 		btnBrowse.setBounds(10, 320, 100, 25);
 		btnBrowse.setEnabled(false);
@@ -115,7 +115,7 @@ public class ClientUI {
 		btnRefresh.setEnabled(false);
 		btnRefresh.addActionListener(new BtnRefreshActionListener());
 		pnlMain.add(btnRefresh);
-		
+
 		btnDownload = new JButton("Download");
 		btnDownload.setBounds(585, 320, 100, 25);
 		btnDownload.setEnabled(false);
@@ -162,7 +162,7 @@ public class ClientUI {
 			System.out.println(e.getMessage());
 		}
 	}
-	
+
 	/**
 	 * Enable the buttons in this window.
 	 */
@@ -211,7 +211,7 @@ public class ClientUI {
 			}
 		}
 	}
-	
+
 	/** 
 	 * Event handling for when btnUpload is clicked.
 	 */
@@ -225,7 +225,7 @@ public class ClientUI {
 			}
 		}
 	}
-	
+
 	/** 
 	 * Event handling for when btnRefresh is clicked.
 	 */
@@ -235,7 +235,7 @@ public class ClientUI {
 			refreshFileList();
 		}
 	}
-	
+
 	/** 
 	 * Event handling for when btnDownload is clicked.
 	 */

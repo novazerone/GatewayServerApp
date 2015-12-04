@@ -63,7 +63,7 @@ public class Server {
 
 	private DuplicateListener duplicateListener;
 	private ServerSocket serverSocket;
-	
+
 	private DownloadListener downloadListener;
 	private ServerSocket downloadServerSocket;
 
@@ -91,7 +91,7 @@ public class Server {
 		window.setServerName(ServerName);
 	}
 
-	/*
+	/**
 	 * Opens a connection to the server.
 	 */
 	public boolean open(){
@@ -131,7 +131,7 @@ public class Server {
 			serverSocket = new ServerSocket(ListenerPort);
 			duplicateListener = new DuplicateListener(serverSocket);
 			duplicateListener.start();
-			
+
 			downloadServerSocket = new ServerSocket(DownloadPort);
 			downloadListener = new DownloadListener(downloadServerSocket);
 			downloadListener.start();
@@ -144,7 +144,7 @@ public class Server {
 		return true;
 	}
 
-	/*
+	/**
 	 * Close the current connection.
 	 */
 	public void close(){
@@ -164,7 +164,7 @@ public class Server {
 		}
 	}
 
-	/* 
+	/**
 	 * Server logic.
 	 */
 	private void run(){
@@ -285,7 +285,7 @@ public class Server {
 			fileCache.setIsFinal(true);
 
 			window.log("File succesfully saved." + "\n", Color.BLACK);
-			
+
 			window.log("Saving to database... FID: " + fileId + "\n", Color.BLACK);
 			ServerJDBCTemplate db = new ServerJDBCTemplate();
 			db.updateUploadFinish(fileId, db.getServer(ServerName).getId(), 1);

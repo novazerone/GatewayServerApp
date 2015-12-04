@@ -18,77 +18,77 @@ import controllers.UploadController;
 
 public class ClientHandler extends Thread {
 	private String name;
-    private Socket connection;
-    private BufferedReader in;
-    private PrintWriter out;
-    private ObjectInputStream ois;
-    private FileOutputStream fos;
+	private Socket connection;
+	private BufferedReader in;
+	private PrintWriter out;
+	private ObjectInputStream ois;
+	private FileOutputStream fos;
 
-    public ClientHandler(Socket _socket) {
-        connection = _socket;
-    }
+	public ClientHandler(Socket _socket) {
+		connection = _socket;
+	}
 
-    @Override
-    public void run() {
-        try {
-        	// Initialize streams.
-            in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            out = new PrintWriter(connection.getOutputStream(), true);
+	@Override
+	public void run() {
+		try {
+			// Initialize streams.
+			in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+			out = new PrintWriter(connection.getOutputStream(), true);
 
-            Gateway.log("A client connected." + "\n", Color.BLACK);
-            name = UUID.randomUUID().toString();
-            
-            // Get mode and file name.
-            String mode = null;
-            String fileName = null;
-            long fileSize = 0;
-            while(true){
-            	String input = in.readLine();
-            	
-            	if(input == null){
-            		Gateway.log("Client lost connection. \n", Color.BLACK);
-            		throw new Exception();
-            	}
-            	
-            	if(input.startsWith("MODE:")){
-            		mode = input.substring(5);
-            	} else if(input.startsWith("FILENAME:")){
-            		fileName = input.substring(9);
-            	} else if(input.startsWith("FILESIZE:")){
-            		fileSize = Long.parseLong(input.substring(9));
-            	}
-            	
-            	if(mode != null && fileName != null && fileSize != 0)
-            		break;
-            }
-            
-        	CacheManager cm = Gateway.getInstance().getCacheManager();
-        	int byteOffset = 0;
-            if(mode.equals("UPLOAD")){
-            	if(cm.contains(fileName)){
-            		if(!cm.getByteCache(fileName).getIsFinal()){
-            			byteOffset = cm.getByteCache(fileName).getCurrentSize();
-            			out.println("PROCEEDTOUPLOAD:" + byteOffset);
-            			
-            			Gateway.log("Resuming download at " + byteOffset + "..." + "\n", Color.BLUE);
-            			
-            		} else{
-            			out.println("PROCEEDTOUPLOAD:0"); // Overwrite file.
-            			Gateway.log("Beginning download..." + "\n", Color.BLUE);
-            		}
-            		
-            	} else{
-            		out.println("PROCEEDTOUPLOAD:0");
-        			Gateway.log("Beginning download..." + "\n", Color.BLUE);
-            	}
-            	
-                out.flush();
+			Gateway.log("A client connected." + "\n", Color.BLACK);
+			name = UUID.randomUUID().toString();
+
+			// Get mode and file name.
+			String mode = null;
+			String fileName = null;
+			long fileSize = 0;
+			while(true){
+				String input = in.readLine();
+
+				if(input == null){
+					Gateway.log("Client lost connection. \n", Color.BLACK);
+					throw new Exception();
+				}
+
+				if(input.startsWith("MODE:")){
+					mode = input.substring(5);
+				} else if(input.startsWith("FILENAME:")){
+					fileName = input.substring(9);
+				} else if(input.startsWith("FILESIZE:")){
+					fileSize = Long.parseLong(input.substring(9));
+				}
+
+				if(mode != null && fileName != null && fileSize != 0)
+					break;
+			}
+
+			CacheManager cm = Gateway.getInstance().getCacheManager();
+			int byteOffset = 0;
+			if(mode.equals("UPLOAD")){
+				if(cm.contains(fileName)){
+					if(!cm.getByteCache(fileName).getIsFinal()){
+						byteOffset = cm.getByteCache(fileName).getCurrentSize();
+						out.println("PROCEEDTOUPLOAD:" + byteOffset);
+
+						Gateway.log("Resuming download at " + byteOffset + "..." + "\n", Color.BLUE);
+
+					} else{
+						out.println("PROCEEDTOUPLOAD:0"); // Overwrite file.
+						Gateway.log("Beginning download..." + "\n", Color.BLUE);
+					}
+
+				} else{
+					out.println("PROCEEDTOUPLOAD:0");
+					Gateway.log("Beginning download..." + "\n", Color.BLUE);
+				}
+
+				out.flush();
 				BufferedInputStream bis = new BufferedInputStream(connection.getInputStream());
-				
-	            while(true){
-	            	try{
+
+				while(true){
+					try{
 						fos = new FileOutputStream(".\\_Gateway\\"+fileName, byteOffset > 0);
-						
+
 						byte[] buffer = new byte[Driver.getClientTransferBlockSize()];
 						int n;
 
@@ -99,68 +99,68 @@ public class ClientHandler extends Thread {
 							cache = new ByteCache(fileName, (int)fileSize);
 							cm.add(cache);
 						}
-						
+
 						// Download the chunks.
 						while((n = bis.read(buffer)) > 0){
 							fos.write(buffer, 0, n);
 							byteOffset += n;
 							cache.write(buffer, 0, n);
-							
+
 							Gateway.log("Downloading... " + byteOffset + " out of " + fileSize + "\n", Color.BLACK);
 						}
-						
+
 						fos.close();
-						
+
 						// Finalize this cache. 
 						cache.setIsFinal(true);
-						
+
 						Gateway.log("File succesfully saved." + "\n", Color.BLACK);
-						
+
 						// Save to database.
 						UploadController uploadController = new UploadController();
 						database.models.Server_File dbFile = uploadController.uploadFile(fileName, (int)fileSize);
-						
+
 						// Distribute
 						Gateway.getInstance().distribute(cache, dbFile.getDestinationServers(), dbFile.getFile_id());
-	            	} catch(Exception e){
-	            		Gateway.log("Error: " + e.getMessage() + "\n", Color.RED);
-	            		Gateway.log("Failed to download file from client." + "\n", Color.RED);
-	            		e.printStackTrace();
-	            	}
+					} catch(Exception e){
+						Gateway.log("Error: " + e.getMessage() + "\n", Color.RED);
+						Gateway.log("Failed to download file from client." + "\n", Color.RED);
+						e.printStackTrace();
+					}
 					break;
-	            }
-            } else{
-            	// Supply the port to the server.
-            	Gateway.log("Download requested. Returning port... \n", Color.BLUE);
-            	out.println("PROCEEDTOPORT:" + 9002); // TODO: Change port to available server.
-            	out.flush();
-            }
+				}
+			} else{
+				// Supply the port to the server.
+				Gateway.log("Download requested. Returning port... \n", Color.BLUE);
+				out.println("PROCEEDTOPORT:" + 9002); // TODO: Change port to available server.
+				out.flush();
+			}
 
-        } catch (IOException e) {
-            System.out.println(e);
-            
-        } catch (Exception e) {
+		} catch (IOException e) {
+			System.out.println(e);
+
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
-        	close();
-        }
-    }
-    
-    public void close(){
-        try {
-            connection.close();
-            if(out != null)
-            	out.println("CLOSE");
-        } catch (IOException e) {
-        	System.out.println(e.getMessage());
-        }
-        
-        Gateway.getInstance().getClientListener().removeClient(this);
+			close();
+		}
+	}
+
+	public void close(){
+		try {
+			connection.close();
+			if(out != null)
+				out.println("CLOSE");
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+		}
+
+		Gateway.getInstance().getClientListener().removeClient(this);
 		Gateway.log("Client " + name + " closed connection." + "\n", Color.BLACK);
-    }
-    
-    public void setClientName(String _name){
-    	name = _name;
-    }
+	}
+
+	public void setClientName(String _name){
+		name = _name;
+	}
 }

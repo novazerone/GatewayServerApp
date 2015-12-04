@@ -1,22 +1,26 @@
 package server;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.util.List;
 
+import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
+import javax.swing.border.BevelBorder;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
@@ -24,14 +28,6 @@ import javax.swing.text.StyleContext;
 
 import database.FileJDBCTemplate;
 import database.ServerJDBCTemplate;
-import javafx.beans.binding.When;
-
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import javax.swing.border.BevelBorder;
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
-import javax.swing.JProgressBar;
 
 public class ServerUI {
 
@@ -46,7 +42,7 @@ public class ServerUI {
 	private JPanel pnlStatus;
 	private JLabel lblStatus;	
 	private JProgressBar progressBar;
-	
+
 	private String serverName;
 
 	public ServerUI(String _windowName){
@@ -148,14 +144,14 @@ public class ServerUI {
 		this.serverName = serverName;
 		refreshFileList();
 	}
-	
+
 	/**
 	 * Refreshes the list of files the server contains.
 	 */
 	private void refreshFileList() {
 		FileJDBCTemplate dbFile= new FileJDBCTemplate();
 		ServerJDBCTemplate dbServer = new ServerJDBCTemplate();
-		
+
 		List<database.models.File> fileList = dbFile.listServerFiles(dbServer.getServer(serverName).getId());
 		DefaultListModel<String> model = new DefaultListModel<String>();
 		for(database.models.File f : fileList) {

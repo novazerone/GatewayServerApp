@@ -1,15 +1,12 @@
 package app;
 
-import java.util.List;
-
 import controllers.UploadController;
 import database.ServerJDBCTemplate;
-import database.models.Server;
 import database.models.Server_File;
 
 public class Driver2 {
 
-
+	@SuppressWarnings("unused")
 	public static void main(String[] args) {
 
 		UploadController uploadController = new UploadController();

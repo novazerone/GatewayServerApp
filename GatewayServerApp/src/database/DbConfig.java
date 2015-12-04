@@ -9,6 +9,14 @@ public class DbConfig {
 	private static String password;
 	private static String driverClass;
 
+	/**
+	 * Fetches the values from the DbConectionFactory.ini file.
+	 * If DbConectionFactory.ini does not exist, create the file in the /resources/ folder with the following:
+	 * 		URL = jdbc:mysql://localhost:3306/gateway_server
+	 * 		USER = root
+	 * 		PASSWORD = root
+	 * 		DRIVER_CLASS = com.mysql.jdbc.Driver
+	 */
 	public static void initialize(){
 		try {
 			File f = new File(".\\resources\\DbConnectionFactory.ini");
