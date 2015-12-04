@@ -19,6 +19,7 @@ SET time_zone = "+00:00";
 --
 -- Database: `gateway_server`
 --
+CREATE SCHEMA IF NOT EXISTS `gateway_server`;
 
 -- --------------------------------------------------------
 
