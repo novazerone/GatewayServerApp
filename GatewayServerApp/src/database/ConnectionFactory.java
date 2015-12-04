@@ -8,17 +8,17 @@ import java.sql.SQLException;
  * Created by user on 11/30/2015.
  */
 public class ConnectionFactory {
-
+//    private static final String URL = ;
+//    private static final String USER = ;
+//    private static final String PASSWORD = ;
+//    private static final String DRIVER_CLASS = ;
     private static ConnectionFactory instance = new ConnectionFactory();
-    public static final String URL = "jdbc:mysql://localhost:3306/gateway_server";
-    public static final String USER = "root";
-    public static final String PASSWORD = "";
-    public static final String DRIVER_CLASS = "com.mysql.jdbc.Driver";
 
     //private constructor
     private ConnectionFactory() {
+    	DbConfig.initialize();
         try {
-            Class.forName(DRIVER_CLASS);
+            Class.forName(DbConfig.getDriverClass());
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -27,7 +27,7 @@ public class ConnectionFactory {
     private Connection createConnection() {
         Connection connection = null;
         try {
-            connection = DriverManager.getConnection(URL, USER, PASSWORD);
+            connection = DriverManager.getConnection(DbConfig.getUrl(), DbConfig.getUser(), DbConfig.getPassword());
 
         } catch (SQLException e) {
             System.out.println("ERROR: Unable to Connect to Database.");

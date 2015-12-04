@@ -1,9 +1,9 @@
-/bin/
 .idea/
 *.eml
-
+DbConnectionFactory.ini
 
 # Java bin
+GatewayServerApp/bin/
 *.class
 
 # Mobile Tools for Java (J2ME)
