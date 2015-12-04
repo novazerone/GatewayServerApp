@@ -179,7 +179,7 @@ public class ServerJDBCTemplate implements ServerDAO {
 
 	@Override
 	public List<Server> getServerWithFiles(Integer file_id) {
-		String query = SELECT * FROM server_file JOIN servers ON server_file.server_id = servers.id WHERE file_id = ? AND server_file.status = 1";
+		String query = "SELECT * FROM server_file JOIN servers ON server_file.server_id = servers.id WHERE file_id = ? AND server_file.status = 1";
 		ResultSet rs;
 		List<Server> servers = new ArrayList<Server>();
 
