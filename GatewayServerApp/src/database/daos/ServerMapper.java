@@ -16,7 +16,8 @@ public class ServerMapper {
         server.setName(rs.getString("name"));
         server.setTotal_fize_size(rs.getInt("total_file_size"));
         server.setStatus(rs.getBoolean("status"));
-        server.setPort(rs.getInt("port"));
+        server.setUploadPort(rs.getInt("port"));
+        server.setDownloadPort(rs.getInt("download_port"));
 
         return server;
     }

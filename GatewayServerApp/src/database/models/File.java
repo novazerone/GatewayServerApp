@@ -7,7 +7,7 @@ public class File{
 
     private Integer id;
     private String file_name;
-    private String file_size;
+    private Integer file_size;
     private Integer status;
 
     /**
@@ -15,7 +15,7 @@ public class File{
      *
      * @return Value of file_size.
      */
-    public String getFile_size() {
+    public Integer getFile_size() {
         return file_size;
     }
 
@@ -60,7 +60,7 @@ public class File{
      *
      * @param file_size New value of file_size.
      */
-    public void setFile_size(String file_size) {
+    public void setFile_size(Integer file_size) {
         this.file_size = file_size;
     }
 

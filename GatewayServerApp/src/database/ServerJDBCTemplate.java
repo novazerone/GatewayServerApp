@@ -26,10 +26,11 @@ public class ServerJDBCTemplate implements ServerDAO {
 	private PreparedStatement preparedStatement5 = null;
 	private Connection connection;
 
-	@Override
-	public int create(String server_name, Integer port) {
 
-		String query = "insert into servers (name, status, total_file_size, port) values (?, ?, ?, ?)";
+	@Override
+	public int create(String server_name, Integer uploadPort, Integer downloadPort) {
+
+		String query = "insert into servers (name, status, total_file_size, port, download_port) values (?, ?, ?, ?, ?)";
 
 		connection = ConnectionFactory.getConnection();
 		int last_inserted_id = 0;
@@ -38,7 +39,8 @@ public class ServerJDBCTemplate implements ServerDAO {
 			preparedStatement.setString(1, server_name);
 			preparedStatement.setBoolean(2, true);
 			preparedStatement.setInt(3, 0);
-			preparedStatement.setInt(4, port);
+			preparedStatement.setInt(4, uploadPort);
+			preparedStatement.setInt(5, downloadPort);
 			preparedStatement.execute();
 
 			ResultSet rs = preparedStatement.getGeneratedKeys();

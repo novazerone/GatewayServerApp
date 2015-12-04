@@ -9,7 +9,8 @@ public class Server {
     private String name;
     private boolean status;
     private Integer total_fize_size;
-    private Integer port;
+    private Integer uploadPort;
+    private Integer downloadPort;
 
     /**
      * Sets new name.
@@ -83,21 +84,41 @@ public class Server {
         return total_fize_size;
     }
 
+
+
     /**
-     * Gets port.
+     * Gets uploadPort.
      *
-     * @return Value of port.
+     * @return Value of uploadPort.
      */
-    public Integer getPort() {
-        return port;
+    public Integer getUploadPort() {
+        return uploadPort;
     }
 
     /**
-     * Sets new port.
+     * Gets downloadPort.
      *
-     * @param port New value of port.
+     * @return Value of downloadPort.
      */
-    public void setPort(Integer port) {
-        this.port = port;
+    public Integer getDownloadPort() {
+        return downloadPort;
+    }
+
+    /**
+     * Sets new uploadPort.
+     *
+     * @param uploadPort New value of uploadPort.
+     */
+    public void setUploadPort(Integer uploadPort) {
+        this.uploadPort = uploadPort;
+    }
+
+    /**
+     * Sets new downloadPort.
+     *
+     * @param downloadPort New value of downloadPort.
+     */
+    public void setDownloadPort(Integer downloadPort) {
+        this.downloadPort = downloadPort;
     }
 }

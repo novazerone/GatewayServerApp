@@ -19,7 +19,7 @@ public interface ServerDAO {
      * This is the method to be used to create
      * a record in the Student table.
      */
-    public int create(String name, Integer port);
+    public int create(String name, Integer uploadPort, Integer downloadPort);
     /**
      * This is the method to be used to list down
      * a record from the Student table corresponding
