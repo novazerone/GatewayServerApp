@@ -31,7 +31,6 @@ public class DbConfig {
 					break;
 				case "DRIVER_CLASS":
 					driverClass = value;
-					System.out.println(driverClass);
 					break;
 				default: 
 					System.err.println("Unknown variable [" + var + "] being assigned with " + value);

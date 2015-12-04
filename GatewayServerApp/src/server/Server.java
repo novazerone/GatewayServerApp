@@ -15,9 +15,7 @@ import javax.swing.JOptionPane;
 
 import app.ByteCache;
 import app.Driver;
-import app.LogWindow;
 import database.ServerJDBCTemplate;
-import gatewayServer.ClientListener;
 
 public class Server {
 
@@ -55,7 +53,7 @@ public class Server {
 	private BufferedReader in;
 	private PrintWriter out;
 
-	public static LogWindow window;
+	public static ServerUI window;
 
 	private boolean isDownloading = false;
 	private String fileName = "";
@@ -73,14 +71,14 @@ public class Server {
 	private int dbServerId;
 
 	public Server() {
-		window = new LogWindow("Server - " + ServerName);
+		window = new ServerUI("Server - " + ServerName);
 		window.log("Server initialized." + "\n", Color.BLACK);
 		window.log("UUID: " + ServerName + "\n", Color.BLACK);
 
 	}
 
 	public void updateServerUI() {
-		window.getFrame().setTitle("Server - " + ServerName);
+		window.getFrame().setTitle("Server - " + ServerName + " // Listening @Port:" + ListenerPort + " // Downloading @Port:" + DownloadPort);
 
 		dbServer = new ServerJDBCTemplate();
 		database.models.Server dbServerObj = dbServer.getServer(ServerName);

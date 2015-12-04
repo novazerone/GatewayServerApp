@@ -39,19 +39,16 @@ public class Client {
             }
         });
     }
-
-    private String name;
     
     private Socket socket;
     private BufferedReader in;
     private PrintWriter out;
 
-    private ClientWindow window;
+    private ClientUI window;
     
     
     public Client(String _name) {
-    	name = _name;
-    	window = new ClientWindow(this, "Client");
+    	window = new ClientUI(this, "Client - " + ClientName);
     	window.log("Client initialized." + "\n", Color.BLACK);
     	
         // Enable window operation.
@@ -128,7 +125,7 @@ public class Client {
 	
 	            if (line.startsWith("IDENTIFY")) {			// The server is asking for identification.
 	            	// Respond with the UUID.
-	                out.println(name);	
+	                out.println(ClientName);	
 	                
 	            } else if(line.startsWith("CONNECTION_SUCCESS")){ 
 	            	window.log("Successfully connected to gateway!" + "\n", Color.BLACK);

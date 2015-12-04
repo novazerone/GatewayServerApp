@@ -8,7 +8,6 @@ import java.util.List;
 import app.ByteCache;
 import app.CacheManager;
 import app.Driver;
-import app.LogWindow;
 import database.ServerJDBCTemplate;
 
 public class Gateway extends Thread {
@@ -43,7 +42,7 @@ public class Gateway extends Thread {
     private ServerListener serverListener;
     private ClientListener clientListener;
     
-    private LogWindow window = new LogWindow("Gateway Server");
+    private GatewayUI window = new GatewayUI("Gateway Server");
     
     private CacheManager cacheManager;
 	
