@@ -200,7 +200,7 @@ public class FileJDBCTemplate implements FileDAO {
 
     @Override
     public List<File> listServerFiles(Integer server_id) {
-        String query = "SELECT file_id, server_id, file_name, file_size from server_file JOIN files " +
+        String query = "SELECT file_id as id, file_name, file_size, files.status from server_file JOIN files " +
                 "ON server_file.file_id = files.id WHERE server_id = ? AND server_file.status = 1";
         ResultSet rs;
         List<File> files = new ArrayList<File>();
