@@ -1,26 +1,20 @@
 package server;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
-import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
-import javax.swing.border.BevelBorder;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
@@ -33,15 +27,19 @@ public class ServerUI {
 
 	// GUI
 	private JFrame frame;
-
-	private JPanel pnlMain;
+	
+	/**
+	 * This is the container for all components on the LEFT side of the separator.
+	 */
+	private JPanel pnlLeft;
 	private JTextPane messagePane;
+	
+	/**
+	 * This is the container for all components on the RIGHT side of the separator.
+	 */
+	private JPanel pnlRight;
 	private JList<String> listFile;
 	private JButton btnRefresh;
-
-	private JPanel pnlStatus;
-	private JLabel lblStatus;	
-	private JProgressBar progressBar;
 
 	private String serverName;
 
@@ -57,53 +55,50 @@ public class ServerUI {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setResizable(false);
 		frame.setSize(700, 400);
-		frame.getContentPane().setLayout(new BorderLayout(0, 0));
+		frame.getContentPane().setLayout(null);
 
-		pnlMain = new JPanel();
-		pnlMain.setLayout(null);
-		frame.getContentPane().add(pnlMain, BorderLayout.CENTER);
+		/* LEFT SIDE */
+		pnlLeft = new JPanel();
+		pnlLeft.setLocation(0, 0);
+		pnlLeft.setSize(405, 371);
+		pnlLeft.setLayout(null);
+		frame.getContentPane().add(pnlLeft);
 
 		messagePane = new JTextPane();
 		messagePane.setEditable(false);
 
 		JScrollPane scrollMsg = new JScrollPane();
-		scrollMsg.setBounds(10, 10, 385, 335);
+		scrollMsg.setBounds(10, 10, 385, 350);
 		scrollMsg.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollMsg.setViewportView(messagePane);
-		pnlMain.add(scrollMsg);
-
+		pnlLeft.add(scrollMsg);
+		
+		/* MIDDLE */
 		JSeparator separator = new JSeparator();
-		separator.setBounds(405, 10, 1, 335);
+		separator.setBounds(405, 10, 1, 350);
 		separator.setOrientation(SwingConstants.VERTICAL);
-		pnlMain.add(separator);
+		frame.getContentPane().add(separator);
+		
+		/* RIGHT SIDE */
+		pnlRight = new JPanel();
+		pnlRight.setBounds(405, 0, 289, 371);
+		pnlRight.setLayout(null);
+		frame.getContentPane().add(pnlRight);
 
 		listFile = new JList<String>();
 		listFile.setBounds(405, 11, 275, 284);
 		listFile.setEnabled(false);
 
 		JScrollPane scrollList = new JScrollPane();
-		scrollList.setBounds(415, 10, 270, 305);
+		scrollList.setBounds(10, 10, 270, 315);
 		scrollList.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollList.setViewportView(listFile);
-		pnlMain.add(scrollList);
+		pnlRight.add(scrollList);
 
 		btnRefresh = new JButton("Refresh");
-		btnRefresh.setBounds(415, 320, 270, 25);
+		btnRefresh.setBounds(10, 335, 270, 25);
 		btnRefresh.addActionListener(new BtnRefreshActionListener());
-		pnlMain.add(btnRefresh);
-
-		pnlStatus = new JPanel();
-		pnlStatus.setPreferredSize(new Dimension(10, 20));
-		pnlStatus.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		frame.getContentPane().add(pnlStatus, BorderLayout.SOUTH);
-		pnlStatus.setLayout(new BoxLayout(pnlStatus, BoxLayout.X_AXIS));
-
-		lblStatus = new JLabel("Status");
-		pnlStatus.add(lblStatus);
-
-		progressBar = new JProgressBar();
-		progressBar.setValue(50);
-		pnlStatus.add(progressBar);
+		pnlRight.add(btnRefresh);
 
 		frame.setVisible(true);
 	}
