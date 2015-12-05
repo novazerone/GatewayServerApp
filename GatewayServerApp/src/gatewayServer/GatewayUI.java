@@ -10,12 +10,11 @@ import javax.swing.JSeparator;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
-import javax.swing.border.BevelBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
-import javax.swing.border.LineBorder;
 
 public class GatewayUI {
 
@@ -36,6 +35,7 @@ public class GatewayUI {
 	 * This is the panel where you dynamically add progress bars.
 	 */
 	private JPanel pnlProgressStack;
+	private JScrollPane scrollProgress;
 
 	public GatewayUI(String windowName){
 		initializeGUI(windowName);
@@ -81,12 +81,10 @@ public class GatewayUI {
 		
 		pnlProgressStack = new JPanel();
 		pnlProgressStack.setBorder(new LineBorder(Color.GRAY));
-		pnlProgressStack.setLayout(new BoxLayout(pnlProgressStack, BoxLayout.X_AXIS));
+		pnlProgressStack.setLayout(new BoxLayout(pnlProgressStack, BoxLayout.Y_AXIS));
 		
-		JScrollPane scrollProgress = new JScrollPane();
+		scrollProgress = new JScrollPane(pnlProgressStack, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollProgress.setBounds(10, 10, 270, 350);
-		scrollMsg.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		scrollProgress.setViewportView(pnlProgressStack);
 		pnlRight.add(scrollProgress);
 		
 		frame.setVisible(true);
@@ -115,5 +113,15 @@ public class GatewayUI {
 		} catch(Exception e){
 			System.out.println(e.getMessage());
 		}
+	}
+	
+	
+	public void validatePanelUpdate(){
+		pnlProgressStack.validate();
+		scrollProgress.validate();
+	}
+	
+	public JPanel getPnlProgressStack() {
+		return pnlProgressStack;
 	}
 }

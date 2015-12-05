@@ -1,9 +1,13 @@
 package gatewayServer;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.List;
+import java.util.Random;
+
+import javax.swing.Box;
 
 import app.ByteCache;
 import app.CacheManager;
@@ -83,15 +87,25 @@ public class Gateway extends Thread {
 		server.downAllServers();
 
 	}
+	
+	private void testDynamicProgressBar() {
+		//TODO: DELETE THIS
+		for (int i = 0; i < 15; i++) {
+			window.getPnlProgressStack().add(new ProgressBar(new Random().nextInt(101)));
+			window.getPnlProgressStack().add(Box.createRigidArea(new Dimension(0,5)));
+		}
+		window.validatePanelUpdate();
+	}
 
 	public void run(){
-
-
 		serverListener.start();
 		clientListener.start();
-
+		
 		cacheManager = new CacheManager(1000000000);	// 1 GB
 
+		//TODO: DELETE THIS
+		testDynamicProgressBar();
+		
 		try {
 			synchronized(serverListener){
 				serverListener.wait();
