@@ -144,8 +144,6 @@ public class Gateway extends Thread {
 	}
 
 	public void distribute(ByteCache _byteCache, List<database.models.Server> _servers, int fileId){
-		Gateway.log("Sending file to server..." + "\n", Color.BLACK);
-
 		if(_servers.size() == 0)
 			return;
 
@@ -155,6 +153,8 @@ public class Gateway extends Thread {
 			Gateway.log("Handler not found for server '" + _servers.get(0).getName() + "'\n", Color.BLACK);
 			return;
 		}
+
+		Gateway.log("Sending file to server" + _servers.get(0).getUploadPort() + "...\n", Color.BLACK);
 		_servers.remove(0);
 		handler.uploadFile(_byteCache, _servers, fileId);
 	}

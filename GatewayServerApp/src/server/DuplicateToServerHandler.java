@@ -98,7 +98,7 @@ public class DuplicateToServerHandler{
 
 			Server.window.log("Saving to database... FID: " + fileId + "\n", Color.BLACK);
 			ServerJDBCTemplate db = new ServerJDBCTemplate();
-			db.updateUploadFinish(fileId, db.getServer(Server.ServerName).getId(), 1);
+			db.updateUploadFinish(fileId, db.getServer(socket.getPort()).getId(), 1);
 		} catch(Exception e){
 			Server.window.log("Error: " + e.getMessage() + "\n", Color.RED);
 			e.printStackTrace();
