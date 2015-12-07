@@ -1,7 +1,9 @@
 package gatewayServer;
 
 import java.awt.Color;
+import java.awt.Dimension;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -115,7 +117,6 @@ public class GatewayUI {
 		}
 	}
 	
-	
 	public void validatePanelUpdate(){
 		pnlProgressStack.validate();
 		scrollProgress.validate();
@@ -123,5 +124,9 @@ public class GatewayUI {
 	
 	public JPanel getPnlProgressStack() {
 		return pnlProgressStack;
+	}
+	
+	public void addGap() {
+		pnlProgressStack.add(Box.createRigidArea(new Dimension(0,5)));
 	}
 }

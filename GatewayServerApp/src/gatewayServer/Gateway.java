@@ -92,7 +92,7 @@ public class Gateway extends Thread {
 		//TODO: DELETE THIS
 		for (int i = 0; i < 15; i++) {
 			window.getPnlProgressStack().add(new ProgressBar(new Random().nextInt(101)));
-			window.getPnlProgressStack().add(Box.createRigidArea(new Dimension(0,5)));
+			window.addGap();
 		}
 		window.validatePanelUpdate();
 	}
