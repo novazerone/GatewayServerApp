@@ -455,7 +455,7 @@ public class ServerJDBCTemplate implements ServerDAO {
 						int neededServer = available_server - server_with_file;
 
 						String query4 = "SELECT * FROM servers LEFT JOIN server_file ON server_file.server_id = servers.id"
-								+ " WHERE file_id = ? AND server_file.STATUS = 1";
+								+ " WHERE file_id = ? AND server_file.status = 1 AND servers.status = 1";
 
 						preparedStatement4 = connection2.prepareStatement(query4);
 						preparedStatement4.setInt(1, file_id);

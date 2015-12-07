@@ -14,6 +14,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import app.Driver;
 import database.FileJDBCTemplate;
@@ -193,11 +194,23 @@ public class Client {
 			// Resume from last point.
 			bis.skip(byteOffset);
 
+			float percent = 0;
+			System.out.println("Starting bar...");
 			// Upload...
 			while((n = bis.read(buffer)) > -1){
 				bos.write(buffer, 0, n);
 				byteOffset += n;
-				window.log("Uploading... " + byteOffset + " out of " + _file.length() + "\n", Color.BLACK);
+
+				percent = (float)byteOffset / _file.length();
+				
+				try {
+					SwingUtilities.invokeLater(new Bar(window, percent));
+					Thread.sleep(100);
+				} catch(InterruptedException e) {
+
+				}
+
+				//window.log("Uploading... " + byteOffset + " out of " + _file.length() + "\n", Color.BLACK);
 			};
 
 			bis.close();
@@ -214,7 +227,7 @@ public class Client {
 
 	public void downloadFile(String _fileName) throws IOException{
 		FileJDBCTemplate dbFile = new FileJDBCTemplate();
-		
+
 		if(_fileName == null)
 			return;
 
@@ -304,6 +317,7 @@ public class Client {
 						fos.write(buffer, 0, n);
 						byteOffset += n;
 
+
 						window.log("Downloading... " + byteOffset + " out of " + fileSize + "\n", Color.BLACK);
 					}
 
@@ -326,5 +340,21 @@ public class Client {
 		}
 
 		close();
+	}
+	
+	public class Bar implements Runnable{
+		
+		ClientUI window;
+		public float percent = 0.0f;
+		public Bar(ClientUI window, float percent){
+			this.window = window;
+			this.percent = percent;
+		}
+		
+		@Override
+		public void run() {
+			window.setProgressBar((int)(percent * 100));
+			System.out.println("% "+(int)(percent * 100));
+		}	
 	}
 }

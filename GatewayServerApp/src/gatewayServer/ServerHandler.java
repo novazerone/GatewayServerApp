@@ -80,7 +80,6 @@ public class ServerHandler extends Thread {
 					if(Gateway.getInstance().getServerListener().getSize() < 2)
 						out.println("DUPLICATERESPONSE:SUCCESS");
 					else {
-						// TODO: Respond with a CSV of server ports.
 						String portCSV = "";
 						for(database.models.Server s : destinationServers){
 							portCSV += s.getUploadPort() + ",";

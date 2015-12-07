@@ -159,12 +159,6 @@ public class Gateway extends Thread {
 		handler.uploadFile(_byteCache, _servers, fileId);
 	}
 
-	public String getRemainingServers(){
-		// TODO: Query for remaining servers.
-		// Return CSV of ports.
-		return "8084";
-	}
-
 	public static void log(String _msg, Color _c){
 		Gateway.getInstance().window.log(_msg, _c);
 	}

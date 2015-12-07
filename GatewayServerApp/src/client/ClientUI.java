@@ -132,7 +132,7 @@ public class ClientUI {
 		pnlStatus.add(lblStatus);
 
 		progressBar = new JProgressBar();
-		progressBar.setValue(50);
+		progressBar.setValue(0);
 		pnlStatus.add(progressBar);
 
 		frame.setVisible(true);
@@ -143,6 +143,12 @@ public class ClientUI {
 	 */
 	public void log(String _msg, Color _c){
 		appendToPane(messagePane, _msg, _c);
+	}
+	
+	public void setProgressBar(int val){
+		progressBar.setValue(val);
+		//progressBar.validate();
+		//pnlStatus.validate();
 	}
 
 	/**
@@ -198,6 +204,8 @@ public class ClientUI {
 	private class BtnBrowseActionListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			progressBar.setValue(0);
+			
 			int x = fileChooser.showOpenDialog(null);
 
 			if (x == JFileChooser.APPROVE_OPTION) {
