@@ -236,7 +236,7 @@ public class ServerJDBCTemplate implements ServerDAO {
 				throw new SQLException(warning.getMessage());
 			}
 
-			String query2 = "SELECT * from servers ORDER BY total_file_size asc LIMIT " + available_server;
+			String query2 = "SELECT * from servers WHERE status = 1 ORDER BY total_file_size asc LIMIT " + available_server;
 			System.out.println(query2);
 			preparedStatement2 = connection.prepareStatement(query2);
 			rs = preparedStatement2.executeQuery();

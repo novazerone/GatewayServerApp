@@ -154,7 +154,7 @@ public class Gateway extends Thread {
 			return;
 		}
 
-		Gateway.log("Sending file to server" + _servers.get(0).getUploadPort() + "...\n", Color.BLACK);
+		Gateway.log("Sending file to server " + _servers.get(0).getUploadPort() + "...\n", Color.BLACK);
 		_servers.remove(0);
 		handler.uploadFile(_byteCache, _servers, fileId);
 	}

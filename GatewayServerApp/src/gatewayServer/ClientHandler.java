@@ -151,7 +151,7 @@ public class ClientHandler extends Thread {
 				int index = r.nextInt(servers.size());
 				int randomDownloadPort = servers.get(index).getDownloadPort();
 				System.out.println("DL PORT: "+randomDownloadPort);
-				out.println("PROCEEDTOPORT:" + randomDownloadPort); // TODO: Change port to available server.
+				out.println("PROCEEDTOPORT:" + randomDownloadPort);
 				out.flush();
 			}
 

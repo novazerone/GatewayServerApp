@@ -44,10 +44,11 @@ public class ServerListener extends Thread{
 	}
 
 	public boolean removeServer(ServerHandler _server){
-
 		ServerJDBCTemplate dbServer = new ServerJDBCTemplate();
-		List<Server_File> files = dbServer.checkFile(_server.getDuplicationPort());
-
+		List<Server_File> forReplication = dbServer.checkFile(_server.getDuplicationPort()); //TODO:
+		
+		
+		
 		return servers.remove(_server);
 	}
 

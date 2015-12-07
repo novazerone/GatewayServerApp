@@ -11,6 +11,7 @@ import java.util.List;
 import app.ByteCache;
 import app.Driver;
 import database.ServerJDBCTemplate;
+import database.models.Server_File;
 
 public class ServerHandler extends Thread {
 	private String name;
