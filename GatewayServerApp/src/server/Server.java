@@ -21,8 +21,6 @@ import app.Driver;
 import app.ProgressBar;
 import database.FileJDBCTemplate;
 import database.ServerJDBCTemplate;
-import gatewayServer.Gateway;
-import gatewayServer.GatewayUI.ProgressBarAnimation;
 
 public class Server {
 

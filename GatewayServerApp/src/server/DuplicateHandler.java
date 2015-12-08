@@ -14,8 +14,6 @@ import javax.swing.SwingUtilities;
 
 import app.Driver;
 import app.ProgressBar;
-import gatewayServer.Gateway;
-import gatewayServer.GatewayUI.ProgressBarAnimation;
 
 public class DuplicateHandler extends Thread {
 	private String name;

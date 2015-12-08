@@ -12,7 +12,6 @@ import javax.swing.SwingUtilities;
 import app.ByteCache;
 import app.Driver;
 import app.ProgressBar;
-import gatewayServer.GatewayUI.ProgressBarAnimation;
 
 public class FileToServerHandler extends Thread {
 

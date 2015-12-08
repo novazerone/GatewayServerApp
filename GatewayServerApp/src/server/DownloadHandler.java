@@ -15,8 +15,6 @@ import javax.swing.SwingUtilities;
 
 import app.Driver;
 import app.ProgressBar;
-import gatewayServer.Gateway;
-import gatewayServer.GatewayUI.ProgressBarAnimation;
 
 public class DownloadHandler extends Thread {
 	private String name;

@@ -6,7 +6,6 @@ import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.List;
@@ -24,14 +23,12 @@ import database.FileJDBCTemplate;
 import database.ServerJDBCTemplate;
 import database.models.File;
 import database.models.Server;
-import gatewayServer.GatewayUI.ProgressBarAnimation;
 
 public class ClientHandler extends Thread {
 	private String name;
 	private Socket connection;
 	private BufferedReader in;
 	private PrintWriter out;
-	private ObjectInputStream ois;
 	private FileOutputStream fos;
 
 	public ClientHandler(Socket _socket) {
@@ -167,9 +164,7 @@ public class ClientHandler extends Thread {
 
 		} catch (IOException e) {
 			System.out.println(e);
-
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
 			close();

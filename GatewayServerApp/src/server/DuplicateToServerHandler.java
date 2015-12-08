@@ -15,8 +15,6 @@ import app.ByteCache;
 import app.Driver;
 import app.ProgressBar;
 import database.ServerJDBCTemplate;
-import gatewayServer.Gateway;
-import gatewayServer.GatewayUI.ProgressBarAnimation;
 
 public class DuplicateToServerHandler{
 

@@ -143,7 +143,6 @@ public class Client {
 		                try {
 							sendFile(_file);
 						} catch (IOException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 		            }
@@ -237,7 +236,6 @@ public class Client {
 		                try {
 							downloadFile(_fileName);
 						} catch (IOException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 		            }

@@ -33,6 +33,7 @@ public class ServerHandler extends Thread {
 
 	@Override
 	public void run() {
+
 		try {
 			// Initialize streams.
 			in = new BufferedReader(new InputStreamReader(connection.getInputStream()));

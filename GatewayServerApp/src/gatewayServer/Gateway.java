@@ -1,18 +1,13 @@
 package gatewayServer;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.List;
-import java.util.Random;
-
-import javax.swing.Box;
 
 import app.ByteCache;
 import app.CacheManager;
 import app.Driver;
-import app.ProgressBar;
 import database.ServerJDBCTemplate;
 
 public class Gateway extends Thread {

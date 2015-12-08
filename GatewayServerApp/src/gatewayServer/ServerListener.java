@@ -1,14 +1,9 @@
 package gatewayServer;
 
-import java.awt.Color;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.SocketException;
-import java.util.List;
 import java.util.Vector;
-
-import database.ServerJDBCTemplate;
-import database.models.Server_File;
 
 /*
  * ServerListener

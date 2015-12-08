@@ -446,7 +446,6 @@ public class ServerJDBCTemplate implements ServerDAO {
 				preparedStatement3.setInt(1, file_id);
 				rs = preparedStatement3.executeQuery();
 				int server_with_file = 0;
-				int i = 0;
 				while (rs.next()) {
 					server_with_file = rs.getInt("server_available");
 
