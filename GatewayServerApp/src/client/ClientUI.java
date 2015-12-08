@@ -53,6 +53,8 @@ public class ClientUI {
 	private File selectedFile;
 
 	private Client client;
+	private JPanel pnlLabel;
+	private JPanel pnlProgress;
 
 	public ClientUI(Client _client, String _windowName){
 		client = _client;
@@ -125,21 +127,31 @@ public class ClientUI {
 
 		pnlStatus = new JPanel();
 		pnlStatus.setPreferredSize(new Dimension(10, 20));
-		pnlStatus.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		frame.getContentPane().add(pnlStatus, BorderLayout.SOUTH);
 		pnlStatus.setLayout(null);
-
+		frame.getContentPane().add(pnlStatus, BorderLayout.SOUTH);
+		
+		
+		pnlLabel = new JPanel();
+		pnlLabel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		pnlLabel.setBounds(0, 0, 100, 20);
+		pnlLabel.setLayout(null);
+		pnlStatus.add(pnlLabel);
+		
 		lblStatus = new JLabel("Status");
-		lblStatus.setLocation(10, 0);
-		lblStatus.setSize(100, 20);
-		pnlStatus.add(lblStatus);
-
-		progressBar = new JProgressBar();
-		progressBar.setForeground(new Color(51, 153, 255));
-		progressBar.setSize(590, 15);
-		progressBar.setLocation(100, 4);
-		progressBar.setValue(0);
-		pnlStatus.add(progressBar);
+		lblStatus.setBounds(10, 0, 100, 20);
+		pnlLabel.add(lblStatus);
+		
+		pnlProgress = new JPanel();
+		pnlProgress.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		pnlProgress.setBounds(100, 0, 594, 20);
+		pnlStatus.add(pnlProgress);
+		pnlProgress.setLayout(null);
+		
+				progressBar = new JProgressBar();
+				progressBar.setBounds(5, 4, 585, 15);
+				pnlProgress.add(progressBar);
+				progressBar.setForeground(new Color(51, 153, 255));
+				progressBar.setValue(0);
 
 		frame.setVisible(true);
 	}
@@ -153,6 +165,14 @@ public class ClientUI {
 	
 	public void updateProgressBar(int val){
 		progressBar.setValue(val);
+		if (progressBar.getValue() == 0 || progressBar.getValue() == 100) {
+			lblStatus.setText("Done");
+			btnUpload.setEnabled(true);
+		}
+		else {
+			lblStatus.setText("Processing");
+			btnUpload.setEnabled(false);
+		}
 	}
 
 	/**

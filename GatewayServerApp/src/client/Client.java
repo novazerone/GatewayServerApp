@@ -27,11 +27,9 @@ public class Client {
 		ClientName = JOptionPane.showInputDialog("Client name");
 		Client client = new Client(ClientName);
 
-		Runtime.getRuntime().addShutdownHook(new Thread()
-		{
+		Runtime.getRuntime().addShutdownHook(new Thread(){
 			@Override
-			public void run()
-			{
+			public void run() {
 				client.close();
 			}
 		});
@@ -217,8 +215,6 @@ public class Client {
 
 				int percent = (int)(((float) byteOffset / _file.length())*100);
 				SwingUtilities.invokeLater(new ProgressBarAnimation(window, percent));
-
-				//window.log("Uploading... " + byteOffset + " out of " + _file.length() + "\n", Color.BLACK);
 			};
 
 			bis.close();
@@ -229,7 +225,7 @@ public class Client {
 			window.log("Error: " + e.getMessage() + "\n", Color.RED);
 			e.printStackTrace();
 		}
-
+		SwingUtilities.invokeLater(new ProgressBarAnimation(window, 0));
 		close();
 	}
 
