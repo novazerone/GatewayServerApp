@@ -1,5 +1,6 @@
 package gatewayServer;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.SocketException;
@@ -13,16 +14,16 @@ import database.models.Server_File;
  * ServerListener
  * - A thread that listens to sub-server connections.
  */
-public class ServerListener extends Thread{
+public class ServerListener extends Thread {
 
 	private ServerSocket socket;
 	private Vector<ServerHandler> servers = new Vector<ServerHandler>();
 
-	public ServerListener (ServerSocket _socket){
+	public ServerListener(ServerSocket _socket) {
 		socket = _socket;
 	}
 
-	public void run(){
+	public void run() {
 		try {
 			// Listen for server connections
 			while (true) {
@@ -34,45 +35,39 @@ public class ServerListener extends Thread{
 		} catch (SocketException e) {
 			System.out.println("Socket closed.");
 
-		} catch(IOException e){
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public boolean addServer(ServerHandler _server){
+	public boolean addServer(ServerHandler _server) {
 		return servers.add(_server);
 	}
 
 	public boolean removeServer(ServerHandler _server){
-		ServerJDBCTemplate dbServer = new ServerJDBCTemplate();
-		List<Server_File> forReplication = dbServer.checkFile(_server.getDuplicationPort());
-
-		List<database.models.Server> destServers = forReplication.get(0).getDestinationServers();
-		
-		
 		return servers.remove(_server);
 	}
 
-	public ServerHandler getServerHandler(int id){
+	public ServerHandler getServerHandler(int id) {
 		return servers.get(id);
 	}
 
-	public ServerHandler getServerHandler(String _name){
-		for(int x = 0; x < servers.size(); x++){
+	public ServerHandler getServerHandler(String _name) {
+		for (int x = 0; x < servers.size(); x++) {
 			ServerHandler sh = servers.get(x);
-			if(sh.getServerName().equals(_name))
+			if (sh.getServerName().equals(_name))
 				return sh;
 		}
 
 		return null;
 	}
 
-	public int getSize(){
+	public int getSize() {
 		return servers.size();
 	}
 
-	public void close(){
-		for(int x = 0; x < servers.size(); x++){
+	public void close() {
+		for (int x = 0; x < servers.size(); x++) {
 			servers.get(x).close();
 		}
 

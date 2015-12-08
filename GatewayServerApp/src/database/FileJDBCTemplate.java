@@ -158,6 +158,47 @@ public class FileJDBCTemplate implements FileDAO {
 		return file;
 
 	}
+	
+	@Override
+	public File getFile(Integer file_id) {
+		String query = "SELECT * from files WHERE id = ?";
+		ResultSet rs;
+		File file = null;
+		Connection connection = ConnectionFactory.getConnection();
+
+		try {
+
+			preparedStatement = connection.prepareStatement(query);
+			preparedStatement.setInt(1,file_id);
+			rs = preparedStatement.executeQuery();
+			int i = 0;
+			while (rs.next()) {
+				System.out.println(rs.toString());
+				FileMapper fileMapper = new FileMapper();
+				file = fileMapper.mapRow(rs, i);
+				i++;
+			}
+
+
+
+			SQLWarning warning = preparedStatement.getWarnings();
+
+			if (warning != null) {
+				throw new SQLException(warning.getMessage());
+			}
+
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DbUtil.close(preparedStatement);
+			DbUtil.close(connection);
+		}
+
+		return file;
+
+	}
+	
 
 	@Override
 	public List<File> listFiles() {

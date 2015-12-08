@@ -10,6 +10,7 @@ import java.util.List;
 
 import app.ByteCache;
 import app.Driver;
+import database.FileJDBCTemplate;
 import database.ServerJDBCTemplate;
 import database.models.Server_File;
 
@@ -23,7 +24,6 @@ public class ServerHandler extends Thread {
 
 	private int listenerPort = 0;	// The port in which this server will listen for duplications.
 	private ServerJDBCTemplate dbServer;
-	private int dbServerId;
 
 	public List<database.models.Server> destinationServers;
 
@@ -74,7 +74,6 @@ public class ServerHandler extends Thread {
 				if(message.startsWith("MESSAGE")){
 					Gateway.log(message.substring(8) + "\n", Color.BLACK);
 				} else if(message.startsWith("DUPLICATEFILE")){
-					String fileName = message.substring(14);
 					// TODO: Query stuff. If file is not 2/3, respond with another server's port 
 					// so that this guy can establish a connection with it independently.
 					if(Gateway.getInstance().getServerListener().getSize() < 2)
@@ -112,8 +111,26 @@ public class ServerHandler extends Thread {
 			System.out.println(e.getMessage());
 		}
 
-		Gateway.getInstance().getServerListener().removeServer(this);
 		Gateway.log("Server " + name + " closed connection." + "\n", Color.BLACK);
+		Gateway.log("Checking for 2/3...\n", Color.BLACK);
+		Gateway.getInstance().getServerListener().removeServer(this);
+		
+		ServerJDBCTemplate dbServer = new ServerJDBCTemplate();
+		List<Server_File> forReplication = dbServer.checkFile(getDuplicationPort());
+		
+		if(forReplication.size() == 0){
+			Gateway.log("All files safe.\n", Color.BLUE);
+			return;
+		}
+
+		Gateway.log("Duplicating files...\n", Color.BLUE);
+		FileJDBCTemplate dbFile = new FileJDBCTemplate();
+		for(Server_File sf : forReplication){
+			List<database.models.Server> destServers = sf.getDestinationServers();
+			List<database.models.Server> srcServers = sf.getSourceServers();
+			
+			Gateway.getInstance().distribute(srcServers, destServers, dbFile.getFile(sf.getFile_id()).getFile_name(), sf.getFile_id());
+		}
 	}
 
 	public void setServerName(String _name){
@@ -136,5 +153,18 @@ public class ServerHandler extends Thread {
 		destinationServers = _servers;
 		ftsh = new FileToServerHandler(connection, out, _byteCache, fileId);
 		ftsh.start();
+	}
+	
+	public void uploadFile(List<database.models.Server> _dstServers, String _fileName, int fileId){
+		String portCSV = "";
+		for(database.models.Server s : _dstServers){
+			portCSV += s.getUploadPort() + ",";
+		}
+		portCSV = portCSV.substring(0, portCSV.length()-1);
+		Gateway.log("Requesting Server " + getServerName() + " to duplicate " + _fileName + " to ports: " + portCSV + "\n", Color.BLUE);
+		out.println("DUPLICATERESPONSEWITHNAME:" + _fileName + "," + portCSV);
+		//out.println("DUPLICATE);
+		//ftsh = new FileToServerHandler(connection, out, _fileName, fileId);
+		//ftsh.start();
 	}
 }

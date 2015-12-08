@@ -25,6 +25,8 @@ public interface FileDAO {
 	 * to a passed student id.
 	 */
 	public File getFile(String file_name);
+	
+	public File getFile(Integer file_id);
 	/**
 	 * This is the method to be used to list down
 	 * all the records from the Student table.

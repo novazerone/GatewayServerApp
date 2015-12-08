@@ -158,6 +158,26 @@ public class Gateway extends Thread {
 		_servers.remove(0);
 		handler.uploadFile(_byteCache, _servers, fileId);
 	}
+	
+	public void distribute(List<database.models.Server> _srcServers, List<database.models.Server> _dstServers, String _fileName, int fileId){
+		if(_srcServers.size() == 0){
+			Gateway.log("No source servers.\n", Color.RED);
+			return;
+		}
+		
+		if(_dstServers.size() == 0){
+			Gateway.log("No destination servers.\n", Color.RED);
+			return;
+		}
+		
+		ServerHandler handler = serverListener.getServerHandler(_srcServers.get(0).getName());
+		if(handler == null){
+			Gateway.log("Handler not found for server '" + _srcServers.get(0).getName() + "'\n", Color.BLACK);
+			return;
+		}
+
+		handler.uploadFile(_dstServers, _fileName, fileId);
+	}
 
 	public static void log(String _msg, Color _c){
 		Gateway.getInstance().window.log(_msg, _c);

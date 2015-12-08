@@ -68,7 +68,7 @@ public class DuplicateHandler extends Thread {
 		Server.window.log("Reading line...\n", Color.BLACK);
 		String line = in.readLine();
 
-		Server.window.log(line, Color.BLACK);
+		Server.window.log(line + "\n", Color.BLACK);
 		// No message from the server.
 		if(line == null){
 			//window.log("Lost connection to server." + "\n", Color.RED);
@@ -79,9 +79,10 @@ public class DuplicateHandler extends Thread {
 
 		if(line.startsWith("REQUEST")){
 			String requestContent = line.substring(8);
-			Server.window.log("Gateway requests " + requestContent, Color.BLACK);
 			String[] contentArray = requestContent.split(",");
 			String requestType = contentArray[0];
+			String srcServerName = contentArray[3];
+			Server.window.log("Server " + srcServerName + " requests " + requestContent + "\n", Color.BLACK);
 
 			if(requestType.equals("UPLOAD")){
 				fileName = contentArray[1];
@@ -92,7 +93,6 @@ public class DuplicateHandler extends Thread {
 			}
 		}
 
-		Server.window.log(line, Color.BLACK);
 		return true;
 	}
 

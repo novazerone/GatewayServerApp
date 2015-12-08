@@ -42,14 +42,14 @@ public class DuplicateToServerHandler{
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			out = new PrintWriter(socket.getOutputStream(), true);
 			// Headers.
-			out.println("REQUEST:UPLOAD," + file.getFileName() + "," + file.getCurrentSize());
+			out.println("REQUEST:UPLOAD," + file.getFileName() + "," + file.getCurrentSize() + "," + Server.ServerName);
 
 			int byteOffset = 0;
 			while(true){
 				input = in.readLine();
 
 				if(input == null){
-					Server.window.log("nothing read\n", Color.BLACK);
+					Server.window.log("Nothing read.\n", Color.BLACK);
 					return;
 				}
 
@@ -94,11 +94,15 @@ public class DuplicateToServerHandler{
 				Server.window.log("Uploading... " + byteOffset + " out of " + file.getTargetSize() + "\n", Color.BLACK);
 			};
 
-			Server.window.log("Successfully uploaded file!" + "\n", Color.BLUE);
-
-			Server.window.log("Saving to database... FID: " + fileId + "\n", Color.BLACK);
+			Server.window.log("Successfully uploaded file!" + "\n", Color.BLUE);			
+			
 			ServerJDBCTemplate db = new ServerJDBCTemplate();
+			Server.window.log("Attempting to save... FID: " + fileId + " Port: " + db.getServer(socket.getPort()).getId() + "\n", Color.RED);
+
 			db.updateUploadFinish(fileId, db.getServer(socket.getPort()).getId(), 1);
+			
+			Server.window.log("Saving to database... Socket: " + socket.getPort() + " FID: " + fileId + "\n", Color.BLACK);
+			
 		} catch(Exception e){
 			Server.window.log("Error: " + e.getMessage() + "\n", Color.RED);
 			e.printStackTrace();

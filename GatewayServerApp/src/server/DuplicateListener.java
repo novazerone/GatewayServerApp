@@ -22,7 +22,7 @@ public class DuplicateListener extends Thread{
 	@Override
 	public void run(){
 		try {
-			Server.window.log("Duplication Listener On\n", Color.BLUE);
+			Server.window.log("Duplication Listener at port " + socket.getLocalPort() + "\n", Color.BLUE);
 			// Listen for server connections
 			while (true) {
 				DuplicateHandler server = new DuplicateHandler(socket.accept());
@@ -34,7 +34,7 @@ public class DuplicateListener extends Thread{
 			System.out.println("Socket closed.");
 
 		} catch(IOException e){
-			e.printStackTrace();
+			System.out.println("Socket closed.");
 		}
 	}
 

@@ -1,9 +1,11 @@
 package server;
 
 import java.awt.Color;
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -15,6 +17,7 @@ import javax.swing.JOptionPane;
 
 import app.ByteCache;
 import app.Driver;
+import database.FileJDBCTemplate;
 import database.ServerJDBCTemplate;
 
 public class Server {
@@ -234,6 +237,33 @@ public class Server {
 				//DownloadFileHandler dfh = new DownloadFileHandler(socket, out, window, fileName, fileSize);
 				//dfh.start();
 			}
+		}  else if(line.startsWith("DUPLICATERESPONSEWITHNAME")){
+			String response = line.substring(26);
+
+			window.log("Duplicating to ports " + response + "\n", Color.BLACK);
+			String[] ports = response.split(",");
+			String fName = ports[0];
+
+			String[] fPorts = new String[ports.length - 1];
+			for(int x = 1; x < ports.length; x++){
+				fPorts[x - 1] = ports[x];
+			}
+
+			File file = new File(".\\_Servers\\" + ServerName + "\\" + fName);
+			FileInputStream fis = new FileInputStream(file);
+			BufferedInputStream bis = new BufferedInputStream(fis);
+			
+			ByteCache cache = new ByteCache(fName, (int)file.length());
+			byte[] b = new byte[(int)file.length()];
+			bis.read(b);
+			cache.write(b);
+			
+			FileJDBCTemplate dbFile = new FileJDBCTemplate();
+			database.models.File gFile = dbFile.getFile(fName);
+			window.log("Duplicating FID: " + gFile.getId() + "\n", Color.RED);
+
+			Duplicator duplicator = new Duplicator(cache, fPorts, gFile.getId());
+			duplicator.start();
 		} else if(line.startsWith("DUPLICATERESPONSE")){
 			String response = line.substring(18);
 			if(response.equals("SUCCESS")){

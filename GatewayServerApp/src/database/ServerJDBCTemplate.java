@@ -24,6 +24,7 @@ public class ServerJDBCTemplate implements ServerDAO {
 	private PreparedStatement preparedStatement3 = null;
 	private PreparedStatement preparedStatement4 = null;
 	private PreparedStatement preparedStatement5 = null;
+	private PreparedStatement preparedStatement6 = null;
 	private Connection connection;
 
 
@@ -486,6 +487,13 @@ public class ServerJDBCTemplate implements ServerDAO {
 							ServerMapper serverMapper = new ServerMapper();
 							Server server2 = serverMapper.mapRow(rsServers, j);
 							servers2.add(server2);
+							
+							String query6 = "insert into server_file (file_id, server_id, status) values (?, ?, 0)  ON DUPLICATE KEY UPDATE status = 3";
+							preparedStatement6 = connection2.prepareStatement(query6);
+							preparedStatement6.setInt(1, file_id);
+							preparedStatement6.setInt(2, server2.getId());
+							preparedStatement6.executeUpdate();
+							
 							j++;
 						}
 

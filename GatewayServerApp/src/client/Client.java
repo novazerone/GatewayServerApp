@@ -35,8 +35,6 @@ public class Client {
 				client.close();
 			}
 		});
-
-		client.run();
 	}
 
 	private Socket socket;
@@ -134,7 +132,7 @@ public class Client {
 				}
 			}
 		} catch(Exception e){
-			window.log("Hi Lost connection to server." + "\n", Color.RED);
+			window.log("Lost connection to server." + "\n", Color.RED);
 			close();
 		}
 	}
