@@ -142,6 +142,23 @@ public class Client {
 	/**
 	 * Sends a file to the gateway.
 	 */
+	public void trySendFile(File _file) throws IOException{
+		new java.util.Timer().schedule( 
+		        new java.util.TimerTask() {
+		            @Override
+		            public void run() {
+		                try {
+							sendFile(_file);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+		            }
+		        }, 
+		        100 
+		);
+	}
+	
 	public void sendFile(File _file) throws IOException{
 		if(_file == null)
 			return;
@@ -194,21 +211,14 @@ public class Client {
 			// Resume from last point.
 			bis.skip(byteOffset);
 
-			float percent = 0;
 			System.out.println("Starting bar...");
 			// Upload...
 			while((n = bis.read(buffer)) > -1){
 				bos.write(buffer, 0, n);
 				byteOffset += n;
 
-				percent = (float)byteOffset / _file.length();
-				
-				try {
-					SwingUtilities.invokeLater(new Bar(window, percent));
-					Thread.sleep(100);
-				} catch(InterruptedException e) {
-
-				}
+				int percent = (int)(((float) byteOffset / _file.length())*100);
+				SwingUtilities.invokeLater(new ProgressBarAnimation(window, percent));
 
 				//window.log("Uploading... " + byteOffset + " out of " + _file.length() + "\n", Color.BLACK);
 			};
@@ -342,19 +352,25 @@ public class Client {
 		close();
 	}
 	
-	public class Bar implements Runnable{
+	private class ProgressBarAnimation implements Runnable {
+		private int percent;
+		private ClientUI window;
 		
-		ClientUI window;
-		public float percent = 0.0f;
-		public Bar(ClientUI window, float percent){
+		public ProgressBarAnimation(ClientUI window, int percent) {
 			this.window = window;
 			this.percent = percent;
+			run();
 		}
 		
 		@Override
 		public void run() {
-			window.setProgressBar((int)(percent * 100));
-			System.out.println("% "+(int)(percent * 100));
-		}	
+			window.updateProgressBar(percent);
+//			try {
+//				Thread.sleep(1000);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+		}
 	}
 }

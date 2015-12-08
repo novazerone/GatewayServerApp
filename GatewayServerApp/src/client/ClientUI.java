@@ -23,6 +23,7 @@ import javax.swing.JSeparator;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.SimpleAttributeSet;
@@ -126,12 +127,17 @@ public class ClientUI {
 		pnlStatus.setPreferredSize(new Dimension(10, 20));
 		pnlStatus.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		frame.getContentPane().add(pnlStatus, BorderLayout.SOUTH);
-		pnlStatus.setLayout(new BoxLayout(pnlStatus, BoxLayout.X_AXIS));
+		pnlStatus.setLayout(null);
 
 		lblStatus = new JLabel("Status");
+		lblStatus.setLocation(10, 0);
+		lblStatus.setSize(100, 20);
 		pnlStatus.add(lblStatus);
 
 		progressBar = new JProgressBar();
+		progressBar.setForeground(new Color(51, 153, 255));
+		progressBar.setSize(590, 15);
+		progressBar.setLocation(100, 4);
 		progressBar.setValue(0);
 		pnlStatus.add(progressBar);
 
@@ -145,10 +151,8 @@ public class ClientUI {
 		appendToPane(messagePane, _msg, _c);
 	}
 	
-	public void setProgressBar(int val){
+	public void updateProgressBar(int val){
 		progressBar.setValue(val);
-		//progressBar.validate();
-		//pnlStatus.validate();
 	}
 
 	/**
@@ -225,9 +229,9 @@ public class ClientUI {
 	 */
 	private class BtnUploadActionListener implements ActionListener {
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(ActionEvent e) {			
 			try {
-				client.sendFile(selectedFile);
+				client.trySendFile(selectedFile); //TODO: Thread?
 			} catch (IOException e1) {
 				log("Cannot upload '"+selectedFile.getName()+"'.", Color.RED);
 			}
