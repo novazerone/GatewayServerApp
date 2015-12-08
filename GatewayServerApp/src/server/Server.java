@@ -14,11 +14,15 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import app.ByteCache;
 import app.Driver;
+import app.ProgressBar;
 import database.FileJDBCTemplate;
 import database.ServerJDBCTemplate;
+import gatewayServer.Gateway;
+import gatewayServer.GatewayUI.ProgressBarAnimation;
 
 public class Server {
 
@@ -301,6 +305,12 @@ public class Server {
 
 			fileCache = new ByteCache(fileName, Integer.parseInt(fileSize));
 			window.log("Downloading chunks... \n", Color.blue);
+			
+
+			ProgressBar progress = new ProgressBar("Downloading from Gateway...");
+			Server.window.getPnlProgressStack().add(progress);
+			Server.window.addGap();
+			Server.window.validatePanelUpdate();
 			// Download the chunks.
 			while(byteOffset < Long.parseLong(fileSize)){
 				n = dis.read(buffer);
@@ -308,7 +318,10 @@ public class Server {
 				byteOffset += n;
 				fileCache.write(buffer, 0, n);
 
-				window.log("Downloading... " + byteOffset + " out of " + fileSize + "\n", Color.BLACK);
+				int percent = (int)(((float) byteOffset / Long.parseLong(fileSize))*100);
+				SwingUtilities.invokeLater(Server.window.new ProgressBarAnimation(progress, percent));
+				
+				//window.log("Downloading... " + byteOffset + " out of " + fileSize + "\n", Color.BLACK);
 			}
 
 			fos.close();

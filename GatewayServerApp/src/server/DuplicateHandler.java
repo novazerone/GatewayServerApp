@@ -10,7 +10,12 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import javax.swing.SwingUtilities;
+
 import app.Driver;
+import app.ProgressBar;
+import gatewayServer.Gateway;
+import gatewayServer.GatewayUI.ProgressBarAnimation;
 
 public class DuplicateHandler extends Thread {
 	private String name;
@@ -111,13 +116,20 @@ public class DuplicateHandler extends Thread {
 			byte[] buffer = new byte[Driver.getServerTransferBlockSize()];
 			int n;
 
+			ProgressBar progress = new ProgressBar("Downloading duplicate " + fileName + " from port " + socket.getPort());
+			Server.window.getPnlProgressStack().add(progress);
+			Server.window.addGap();
+			Server.window.validatePanelUpdate();
 			// Download the chunks.
 			while(byteOffset < Integer.parseInt(fileSize)){
 				n = dis.read(buffer);
 				fos.write(buffer, 0, n);
 				byteOffset += n;
 
-				Server.window.log("Downloading... " + byteOffset + " out of " + fileSize + "\n", Color.BLACK);
+				int percent = (int)(((float) byteOffset / Integer.parseInt(fileSize))*100);
+				SwingUtilities.invokeLater(Server.window.new ProgressBarAnimation(progress, percent));
+				
+				//Server.window.log("Downloading... " + byteOffset + " out of " + fileSize + "\n", Color.BLACK);
 			}
 
 			fos.close();

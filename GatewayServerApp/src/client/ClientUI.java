@@ -129,29 +129,29 @@ public class ClientUI {
 		pnlStatus.setPreferredSize(new Dimension(10, 20));
 		pnlStatus.setLayout(null);
 		frame.getContentPane().add(pnlStatus, BorderLayout.SOUTH);
-		
-		
+
+
 		pnlLabel = new JPanel();
 		pnlLabel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		pnlLabel.setBounds(0, 0, 100, 20);
 		pnlLabel.setLayout(null);
 		pnlStatus.add(pnlLabel);
-		
+
 		lblStatus = new JLabel("Status");
 		lblStatus.setBounds(10, 0, 100, 20);
 		pnlLabel.add(lblStatus);
-		
+
 		pnlProgress = new JPanel();
 		pnlProgress.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		pnlProgress.setBounds(100, 0, 594, 20);
 		pnlStatus.add(pnlProgress);
 		pnlProgress.setLayout(null);
-		
-				progressBar = new JProgressBar();
-				progressBar.setBounds(5, 4, 585, 15);
-				pnlProgress.add(progressBar);
-				progressBar.setForeground(new Color(51, 153, 255));
-				progressBar.setValue(0);
+
+		progressBar = new JProgressBar();
+		progressBar.setBounds(5, 4, 585, 15);
+		pnlProgress.add(progressBar);
+		progressBar.setForeground(new Color(51, 153, 255));
+		progressBar.setValue(0);
 
 		frame.setVisible(true);
 	}
@@ -162,7 +162,7 @@ public class ClientUI {
 	public void log(String _msg, Color _c){
 		appendToPane(messagePane, _msg, _c);
 	}
-	
+
 	public void updateProgressBar(int val){
 		progressBar.setValue(val);
 		if (progressBar.getValue() == 0 || progressBar.getValue() == 100) {
@@ -229,7 +229,7 @@ public class ClientUI {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			progressBar.setValue(0);
-			
+
 			int x = fileChooser.showOpenDialog(null);
 
 			if (x == JFileChooser.APPROVE_OPTION) {
@@ -275,7 +275,7 @@ public class ClientUI {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			try {
-				client.downloadFile(listFile.getSelectedValue().toString());
+				client.tryDownloadFile(listFile.getSelectedValue().toString());
 			} catch (IOException e1) {
 				log("Cannot download '"+listFile.getSelectedValue().toString()+"'.", Color.RED);
 			}

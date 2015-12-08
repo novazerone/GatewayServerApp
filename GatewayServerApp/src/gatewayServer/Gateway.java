@@ -12,6 +12,7 @@ import javax.swing.Box;
 import app.ByteCache;
 import app.CacheManager;
 import app.Driver;
+import app.ProgressBar;
 import database.ServerJDBCTemplate;
 
 public class Gateway extends Thread {
@@ -87,24 +88,12 @@ public class Gateway extends Thread {
 		server.downAllServers();
 
 	}
-	
-	private void testDynamicProgressBar() {
-		//TODO: DELETE THIS
-		for (int i = 0; i < 15; i++) {
-			window.getPnlProgressStack().add(new ProgressBar(new Random().nextInt(101)));
-			window.addGap();
-		}
-		window.validatePanelUpdate();
-	}
 
 	public void run(){
 		serverListener.start();
 		clientListener.start();
 		
 		cacheManager = new CacheManager(1000000000);	// 1 GB
-
-		//TODO: DELETE THIS
-		testDynamicProgressBar();
 		
 		try {
 			synchronized(serverListener){
@@ -181,5 +170,9 @@ public class Gateway extends Thread {
 
 	public static void log(String _msg, Color _c){
 		Gateway.getInstance().window.log(_msg, _c);
+	}
+	
+	public GatewayUI getWindow(){
+		return window;
 	}
 }

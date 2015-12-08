@@ -1,4 +1,4 @@
-package gatewayServer;
+package app;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -10,6 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.border.LineBorder;
+import java.awt.Component;
 
 public class ProgressBar extends JPanel {
 	private JLabel lblName;
@@ -18,14 +19,10 @@ public class ProgressBar extends JPanel {
 	/**
 	 * Create the panel.
 	 */
-	public ProgressBar() {
+	public ProgressBar(String label) {
 		initGUI();
-	}
-	
-	//TODO: DELETE. FOR TESTING PURPOSES.
-	public ProgressBar(int val) {
-		initGUI();
-		progressBar.setValue(val);
+		progressBar.setValue(0);
+		lblName.setText(label);
 	}
 	
 	private void initGUI() {
@@ -40,10 +37,15 @@ public class ProgressBar extends JPanel {
 		add(lblName);
 		
 		progressBar = new JProgressBar();
-		progressBar.setPreferredSize(new Dimension(450, 30));
+		progressBar.setAlignmentX(Component.CENTER_ALIGNMENT);
+		progressBar.setPreferredSize(new Dimension(550, 20));
 		progressBar.setMaximumSize(progressBar.getPreferredSize());
-		progressBar.setForeground(Color.GREEN);
+		progressBar.setForeground(new Color(51, 153, 255));
 		add(progressBar);
+	}
+	
+	public void updateProgressBar(int val) {
+		progressBar.setValue(val);
 	}
 
 }

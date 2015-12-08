@@ -11,7 +11,12 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import javax.swing.SwingUtilities;
+
 import app.Driver;
+import app.ProgressBar;
+import gatewayServer.Gateway;
+import gatewayServer.GatewayUI.ProgressBarAnimation;
 
 public class DownloadHandler extends Thread {
 	private String name;
@@ -68,12 +73,19 @@ public class DownloadHandler extends Thread {
 				int n = -1;
 				byte[] buffer = new byte[Driver.getClientTransferBlockSize()];
 
+				ProgressBar progress = new ProgressBar("Uploading " + fileName + " to client...");
+				Server.window.getPnlProgressStack().add(progress);
+				Server.window.addGap();
+				Server.window.validatePanelUpdate();
 				// Upload...
 				while((n = bis.read(buffer)) > -1){
 					dos.write(buffer, 0, n);
 					byteOffset += n;
 
-					Server.window.log("Uploading to client... " + byteOffset + " out of " + file.length() + "\n", Color.BLACK);
+					int percent = (int)(((float) byteOffset /  file.length())*100);
+					SwingUtilities.invokeLater(Server.window.new ProgressBarAnimation(progress, percent));
+					
+					//Server.window.log("Uploading to client... " + byteOffset + " out of " + file.length() + "\n", Color.BLACK);
 				};
 
 				Server.window.log("Successfully uploaded file!" + "\n", Color.BLUE);

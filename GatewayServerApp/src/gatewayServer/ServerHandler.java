@@ -151,7 +151,8 @@ public class ServerHandler extends Thread {
 
 	public void uploadFile(ByteCache _byteCache, List<database.models.Server> _servers, int fileId){
 		destinationServers = _servers;
-		ftsh = new FileToServerHandler(connection, out, _byteCache, fileId);
+		int uploadPort = dbServer.getServer(name).getUploadPort();
+		ftsh = new FileToServerHandler(connection, out, _byteCache, fileId, uploadPort);
 		ftsh.start();
 	}
 	

@@ -13,14 +13,18 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
+import javax.swing.SwingUtilities;
+
 import app.ByteCache;
 import app.CacheManager;
 import app.Driver;
+import app.ProgressBar;
 import controllers.UploadController;
 import database.FileJDBCTemplate;
 import database.ServerJDBCTemplate;
 import database.models.File;
 import database.models.Server;
+import gatewayServer.GatewayUI.ProgressBarAnimation;
 
 public class ClientHandler extends Thread {
 	private String name;
@@ -90,7 +94,7 @@ public class ClientHandler extends Thread {
 
 				out.flush();
 				BufferedInputStream bis = new BufferedInputStream(connection.getInputStream());
-
+				
 				while(true){
 					try{
 						fos = new FileOutputStream(".\\_Gateway\\"+fileName, byteOffset > 0);
@@ -105,14 +109,20 @@ public class ClientHandler extends Thread {
 							cache = new ByteCache(fileName, (int)fileSize);
 							cm.add(cache);
 						}
-
+						
+						ProgressBar progress = new ProgressBar("Client uploading '"+fileName+"'.");
+						Gateway.getInstance().getWindow().getPnlProgressStack().add(progress);
+						Gateway.getInstance().getWindow().addGap();
+						Gateway.getInstance().getWindow().validatePanelUpdate();
+						
 						// Download the chunks.
 						while((n = bis.read(buffer)) > 0){
 							fos.write(buffer, 0, n);
 							byteOffset += n;
 							cache.write(buffer, 0, n);
 
-							Gateway.log("Downloading... " + byteOffset + " out of " + fileSize + "\n", Color.BLACK);
+							int percent = (int)(((float) byteOffset / fileSize)*100);
+							SwingUtilities.invokeLater(Gateway.getInstance().getWindow().new ProgressBarAnimation(progress, percent));
 						}
 
 						fos.close();

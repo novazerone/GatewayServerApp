@@ -1,10 +1,13 @@
 package server;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -15,11 +18,13 @@ import javax.swing.JSeparator;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
+import javax.swing.border.LineBorder;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 
+import app.ProgressBar;
 import database.FileJDBCTemplate;
 import database.ServerJDBCTemplate;
 
@@ -38,6 +43,11 @@ public class ServerUI {
 	 * This is the container for all components on the RIGHT side of the separator.
 	 */
 	private JPanel pnlRight;
+	/**
+	 * This is the panel where you dynamically add progress bars.
+	 */
+	private JPanel pnlProgressStack;
+	private JScrollPane scrollProgress;
 	private JList<String> listFile;
 	private JButton btnRefresh;
 
@@ -84,13 +94,21 @@ public class ServerUI {
 		pnlRight.setBounds(405, 0, 289, 371);
 		pnlRight.setLayout(null);
 		frame.getContentPane().add(pnlRight);
+		
+		pnlProgressStack = new JPanel();
+		pnlProgressStack.setBorder(new LineBorder(Color.GRAY));
+		pnlProgressStack.setLayout(new BoxLayout(pnlProgressStack, BoxLayout.Y_AXIS));
+		
+		scrollProgress = new JScrollPane(pnlProgressStack, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		scrollProgress.setBounds(10, 10, 270, 155);
+		pnlRight.add(scrollProgress);
 
 		listFile = new JList<String>();
 		listFile.setBounds(405, 11, 275, 284);
 		listFile.setEnabled(false);
 
 		JScrollPane scrollList = new JScrollPane();
-		scrollList.setBounds(10, 10, 270, 315);
+		scrollList.setBounds(10, 170, 270, 160);
 		scrollList.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollList.setViewportView(listFile);
 		pnlRight.add(scrollList);
@@ -128,6 +146,19 @@ public class ServerUI {
 		}
 	}
 
+	public void validatePanelUpdate(){
+		pnlProgressStack.validate();
+		scrollProgress.validate();
+	}
+	
+	public JPanel getPnlProgressStack() {
+		return pnlProgressStack;
+	}
+	
+	public void addGap() {
+		pnlProgressStack.add(Box.createRigidArea(new Dimension(0,5)));
+	}
+	
 	/**
 	 * @return the frame.
 	 */
@@ -164,6 +195,22 @@ public class ServerUI {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			refreshFileList();
+		}
+	}
+	
+	public class ProgressBarAnimation implements Runnable {
+		private int percent;
+		private ProgressBar pb;
+		
+		public ProgressBarAnimation(ProgressBar pb, int percent) {
+			this.pb = pb;
+			this.percent = percent;
+			run();
+		}
+		
+		@Override
+		public void run() {
+			pb.updateProgressBar(percent);
 		}
 	}
 }

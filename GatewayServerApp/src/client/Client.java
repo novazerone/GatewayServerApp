@@ -135,9 +135,6 @@ public class Client {
 		}
 	}
 
-	/**
-	 * Sends a file to the gateway.
-	 */
 	public void trySendFile(File _file) throws IOException{
 		new java.util.Timer().schedule( 
 		        new java.util.TimerTask() {
@@ -155,6 +152,9 @@ public class Client {
 		);
 	}
 	
+	/**
+	 * Sends a file to the gateway.
+	 */
 	public void sendFile(File _file) throws IOException{
 		if(_file == null)
 			return;
@@ -229,6 +229,23 @@ public class Client {
 		close();
 	}
 
+	public void tryDownloadFile(String _fileName) throws IOException {
+		new java.util.Timer().schedule( 
+		        new java.util.TimerTask() {
+		            @Override
+		            public void run() {
+		                try {
+							downloadFile(_fileName);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+		            }
+		        }, 
+		        100 
+		);
+	}
+	
 	public void downloadFile(String _fileName) throws IOException{
 		FileJDBCTemplate dbFile = new FileJDBCTemplate();
 
@@ -321,8 +338,10 @@ public class Client {
 						fos.write(buffer, 0, n);
 						byteOffset += n;
 
+						int percent = (int)(((float) byteOffset / fileSize)*100);
+						SwingUtilities.invokeLater(new ProgressBarAnimation(window, percent));
 
-						window.log("Downloading... " + byteOffset + " out of " + fileSize + "\n", Color.BLACK);
+						//window.log("Downloading... " + byteOffset + " out of " + fileSize + "\n", Color.BLACK);
 					}
 
 					fos.close();
@@ -359,12 +378,6 @@ public class Client {
 		@Override
 		public void run() {
 			window.updateProgressBar(percent);
-//			try {
-//				Thread.sleep(1000);
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
 		}
 	}
 }

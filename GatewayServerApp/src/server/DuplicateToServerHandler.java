@@ -9,9 +9,14 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import javax.swing.SwingUtilities;
+
 import app.ByteCache;
 import app.Driver;
+import app.ProgressBar;
 import database.ServerJDBCTemplate;
+import gatewayServer.Gateway;
+import gatewayServer.GatewayUI.ProgressBarAnimation;
 
 public class DuplicateToServerHandler{
 
@@ -86,12 +91,20 @@ public class DuplicateToServerHandler{
 			// Resume from last point.
 			//bis.skip(byteOffset);
 
+			ProgressBar progress = new ProgressBar("Duplicating " + file.getFileName() + " to port " + socket.getPort());
+			Server.window.getPnlProgressStack().add(progress);
+			Server.window.addGap();
+			Server.window.validatePanelUpdate();
 			// Upload...
 			while(byteOffset < file.getTargetSize()){
 				n = bis.read(buffer);
 				bos.write(buffer, 0, n);
 				byteOffset += n;
-				Server.window.log("Uploading... " + byteOffset + " out of " + file.getTargetSize() + "\n", Color.BLACK);
+				
+				int percent = (int)(((float) byteOffset / file.getTargetSize())*100);
+				SwingUtilities.invokeLater(Server.window.new ProgressBarAnimation(progress, percent));
+				
+				//Server.window.log("Uploading... " + byteOffset + " out of " + file.getTargetSize() + "\n", Color.BLACK);
 			};
 
 			Server.window.log("Successfully uploaded file!" + "\n", Color.BLUE);			

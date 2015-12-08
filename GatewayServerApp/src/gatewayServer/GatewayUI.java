@@ -18,6 +18,8 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 
+import app.ProgressBar;
+
 public class GatewayUI {
 
 	// GUI
@@ -85,7 +87,7 @@ public class GatewayUI {
 		pnlProgressStack.setBorder(new LineBorder(Color.GRAY));
 		pnlProgressStack.setLayout(new BoxLayout(pnlProgressStack, BoxLayout.Y_AXIS));
 		
-		scrollProgress = new JScrollPane(pnlProgressStack, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollProgress = new JScrollPane(pnlProgressStack, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		scrollProgress.setBounds(10, 10, 270, 350);
 		pnlRight.add(scrollProgress);
 		
@@ -128,5 +130,22 @@ public class GatewayUI {
 	
 	public void addGap() {
 		pnlProgressStack.add(Box.createRigidArea(new Dimension(0,5)));
+	}
+	
+	
+	public class ProgressBarAnimation implements Runnable {
+		private int percent;
+		private ProgressBar pb;
+		
+		public ProgressBarAnimation(ProgressBar pb, int percent) {
+			this.pb = pb;
+			this.percent = percent;
+			run();
+		}
+		
+		@Override
+		public void run() {
+			pb.updateProgressBar(percent);
+		}
 	}
 }

@@ -7,8 +7,12 @@ import java.io.DataOutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import javax.swing.SwingUtilities;
+
 import app.ByteCache;
 import app.Driver;
+import app.ProgressBar;
+import gatewayServer.GatewayUI.ProgressBarAnimation;
 
 public class FileToServerHandler extends Thread {
 
@@ -16,15 +20,16 @@ public class FileToServerHandler extends Thread {
 	private PrintWriter out;
 
 	private ByteCache file;
-
+	private int uploadPort;
 	public String input = "";
 	int fileId;
 
-	public FileToServerHandler(Socket _socket, PrintWriter _out, ByteCache _byteCache, int _fileId){
+	public FileToServerHandler(Socket _socket, PrintWriter _out, ByteCache _byteCache, int _fileId, int _uploadPort){
 		connection = _socket;
 		out = _out;
 		file = _byteCache;
 		fileId = _fileId;
+		uploadPort = _uploadPort;
 	}
 
 	@Override
@@ -75,13 +80,22 @@ public class FileToServerHandler extends Thread {
 
 			// Resume from last point.
 			//bis.skip(byteOffset);
-
+			
+			ProgressBar progress = new ProgressBar("Uploading to server... '"+uploadPort+"'.");
+			Gateway.getInstance().getWindow().getPnlProgressStack().add(progress);
+			Gateway.getInstance().getWindow().addGap();
+			Gateway.getInstance().getWindow().validatePanelUpdate();
+			
 			// Upload...
 			while(byteOffset < file.getTargetSize()){
 				n = bis.read(buffer);
 				bos.write(buffer, 0, n);
 				byteOffset += n;
-				Gateway.log("Uploading... " + byteOffset + " out of " + file.getTargetSize() + "\n", Color.BLACK);
+				
+				int percent = (int)(((float) byteOffset / file.getTargetSize())*100);
+				SwingUtilities.invokeLater(Gateway.getInstance().getWindow().new ProgressBarAnimation(progress, percent));
+				
+				//Gateway.log("Uploading... " + byteOffset + " out of " + file.getTargetSize() + "\n", Color.BLACK);
 			};
 
 			Gateway.log("Successfully uploaded file!" + "\n", Color.BLUE);
